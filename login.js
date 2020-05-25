@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			parseInt(localStorage.getItem(LOCALSTORAGE_ACCESS_TOKEN_EXPIRY_KEY))
 		) > Date.now()
 	) {
-		window.location = "/main.html";
+		window.location = "/web/main.html";
 	} else {
 		if (window.location.hash) {
 			const hash = parseHash(window.location.hash);
@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
 					LOCALSTORAGE_ACCESS_TOKEN_EXPIRY_KEY,
 					Date.now() + 990 * parseInt(hash["expires_in"])
 				);
-				window.location = "/main.html";
+				window.location = "/web/main.html";
 			}
 		}
 		document
