@@ -3,6 +3,25 @@ const LOCALSTORAGE_ACCESS_TOKEN_EXPIRY_KEY =
 	"spotify-led-matrix-token-expires-in";
 const accessToken = localStorage.getItem(LOCALSTORAGE_ACCESS_TOKEN_KEY);
 
+var spotifyApi = new SpotifyWebApi();
+spotifyApi.setAccessToken(localStorage.getItem(LOCALSTORAGE_ACCESS_TOKEN_KEY));
+
+spotifyApi.getMyCurrentPlayingTrack({}, response => {
+	console.log("response", response);
+	response.json().then(json => {
+		console.log(json);
+		document.getElementById("track_name").textContent = json.item.name;
+		var image = json.item.album.images.pop() || {
+			height: 128,
+			url: "https://via.placeholder.com/128",
+			width: 128
+		};
+		console.log(image);
+		ResizeImage(image.url);
+	});
+});
+
+/*
 fetch("https://api.spotify.com/v1/me/player/currently-playing", {
 	method: "GET",
 	headers: {
@@ -32,9 +51,7 @@ fetch("https://api.spotify.com/v1/audio-analysis/" + track_id, {
 	.then(response => response.json())
 	.then(json => {
 		console.log(json);
-		/*json.beats.forEach((beat, index) => {
-			console.log(`Beat ${index} starts at ${beat.start}`);
-		});*/
+
 	});
 
 /*function getCurrentlyPlaying() {
