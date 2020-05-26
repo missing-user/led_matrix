@@ -6,70 +6,90 @@ const accessToken = localStorage.getItem(LOCALSTORAGE_ACCESS_TOKEN_KEY);
 var spotifyApi = new SpotifyWebApi();
 spotifyApi.setAccessToken(localStorage.getItem(LOCALSTORAGE_ACCESS_TOKEN_KEY));
 
-spotifyApi.getMyCurrentPlayingTrack({}, response => {
-	console.log("response", response);
-	response.json().then(json => {
-		console.log(json);
-		document.getElementById("track_name").textContent = json.item.name;
-		var image = json.item.album.images.pop() || {
-			height: 128,
-			url: "https://via.placeholder.com/128",
-			width: 128
-		};
-		console.log(image);
-		ResizeImage(image.url);
-	});
-});
+//gets the current playing song, shows title and pixelated image
+function getCurrSongInfo() {
+	spotifyApi
+		.getMyCurrentPlayingTrack()
+		.then(
+			function(data) {
+				console.log("current song", data);
+				if (data) {
+					document.getElementById("track_name").textContent = data.item.name;
+					//get the last (lowest resolution) image from the album images list
+					var image = data.item.album.images.pop();
+					console.log(image);
+					pixelateAndDisplay(image.url);
+					return data.item.id;
+				}
+				return null;
+			},
+			function(err) {
+				console.error(err);
+			}
+		)
+		.then(getSongAnalysis);
+}
 
-/*
-fetch("https://api.spotify.com/v1/me/player/currently-playing", {
-	method: "GET",
-	headers: {
-		Authorization: `Bearer ${accessToken}`
+function getSongAnalysis(songId) {
+	spotifyApi.getAudioAnalysisForTrack(songId).then(
+		//do something with json
+		testDisplayAnalysis
+	);
+}
+
+var even = true;
+function testDisplayAnalysis(data) {
+	data.sections;
+	for (var sct of data.sections) {
+		setupSection(sct);
 	}
-})
-	.then(response => response.json())
-	.then(json => {
-		console.log(json);
-		document.getElementById("track_name").textContent = json.item.name;
-		var image = json.item.album.images.pop() || {
-			height: 128,
-			url: "https://via.placeholder.com/128",
-			width: 128
-		};
-		console.log(image);
-		ResizeImage(image.url);
-	});
+	setTimeout(
+		(document.getElementById("sectionInfo").textContent = "done"),
+		(data.sections[data.sections.length - 1].start +
+			data.sections[data.sections.length - 1].duration) *
+			1000
+	);
 
-var track_id = "6EJiVf7U0p1BBfs0qqeb1f";
-fetch("https://api.spotify.com/v1/audio-analysis/" + track_id, {
-	method: "GET",
-	headers: {
-		Authorization: `Bearer ${accessToken}`
+	for (var beat of data.beats) {
+		setupBeat(beat);
 	}
-})
-	.then(response => response.json())
-	.then(json => {
-		console.log(json);
+}
 
-	});
+function setupSection(section) {
+	setTimeout(
+		() =>
+			(document.getElementById(
+				"sectionInfo"
+			).textContent = `duration: ${section.duration},\n time signature: ${section.time_signature},\n loudness: ${section.loudness}`),
+		section.start * 1000
+	);
+}
 
-/*function getCurrentlyPlaying() {
-  fetch("https://api.spotify.com/v1/me/player/currently-playing" -H "Accept: application/json" -H "Content-Type: application/json" -H "Authorization: Bearer {TOKEN}")
-}*/
+function setupBeat(beat) {
+	setTimeout(() => {
+		document.getElementById("art").style.filter = even
+			? "invert(100%)"
+			: "invert(0%)";
+		even = !even;
+	}, beat.start * 1000);
+}
 
+testDisplayAnalysis();
+getCurrSongInfo();
+
+//image pixelization stuff
 var img = new Image();
 var canvas = document.getElementById("canvas");
 var ctx = canvas.getContext("2d");
 
-function ResizeImage(url) {
+function pixelateAndDisplay(url) {
 	img.crossOrigin = "anonymous";
 	img.src = url;
 	img.onload = function() {
 		canvas.height = img.height * 4;
 		canvas.width = img.width * 4;
 		ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-		setTimeout(pixelate, 250);
+		setTimeout(pixelate, 750);
 	};
 }
 
