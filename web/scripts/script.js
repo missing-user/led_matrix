@@ -38,7 +38,8 @@ function getSongAnalysis(songId) {
 	);
 }
 
-var even = true;
+var even = true,
+	even2 = true;
 function testDisplayAnalysis(data) {
 	data.sections;
 	for (var sct of data.sections) {
@@ -55,6 +56,10 @@ function testDisplayAnalysis(data) {
 	for (var beat of data.beats) {
 		setupBeat(beat);
 	}
+
+	for (var bar of data.bars) {
+		setupBeat(bar);
+	}
 }
 
 function setupSection(section) {
@@ -69,11 +74,20 @@ function setupSection(section) {
 
 function setupBeat(beat) {
 	setTimeout(() => {
-		document.getElementById("art").style.filter = even
+		document.getElementById("art2").style.filter = even
+			? "invert(100%)"
+			: "invert(0%)";
+		even2 = !even2;
+	}, beat.start * 1000);
+}
+
+function setupBar(bar) {
+	setTimeout(() => {
+		document.getElementById("art2").style.filter = even
 			? "invert(100%)"
 			: "invert(0%)";
 		even = !even;
-	}, beat.start * 1000);
+	}, bar.start * 1000);
 }
 
 getCurrSongInfo();
