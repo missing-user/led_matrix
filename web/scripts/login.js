@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			parseInt(localStorage.getItem(LOCALSTORAGE_ACCESS_TOKEN_EXPIRY_KEY))
 		) > Date.now()
 	) {
-		window.location = "web/main.html";
+		window.location.href = "web/main.html";
 	} else {
 		if (window.location.hash) {
 			const hash = parseHash(window.location.hash);
@@ -36,31 +36,17 @@ document.addEventListener("DOMContentLoaded", () => {
 					LOCALSTORAGE_ACCESS_TOKEN_EXPIRY_KEY,
 					Date.now() + 990 * parseInt(hash["expires_in"])
 				);
-				window.location = "web/main.html";
+				window.location.href = "web/main.html";
 			}
 		}
-		window.location.replace(
-			"https://accounts.spotify.com/authorize?client_id=052c0d00a1cb4a7e8f63037443b7aee1&redirect_uri=https://missing-user.github.io/led_matrix/&response_type=token&show_dialog=true&scope=" +
-				jssdkscopes.join("+")
-		);
-		/*document
+		document
 			.getElementById("spotifyBtn")
 			.addEventListener("click", function(e) {
 				e.preventDefault();
-				fetch("https://accounts.spotify.com/authorize?", {
-					client_id: "052c0d00a1cb4a7e8f63037443b7aee1",
-					response_type: "token",
-					scope: jssdkscopes.join(" "),
-					redirect_uri: "https://missing-user.github.io/led_matrix/",
-					show_dialog: true
-				})
-					.then(e => e.json())
-					.then(data => {
-						window.location = data.redirectUri;
-					})
-					.catch(error => {
-						alert("Failed to prepare for Spotify Authentication");
-					});
-			});*/
+				window.location.replace(
+					"https://accounts.spotify.com/authorize?client_id=052c0d00a1cb4a7e8f63037443b7aee1&redirect_uri=https://missing-user.github.io/led_matrix/&response_type=token&show_dialog=true&scope=" +
+						jssdkscopes.join("+")
+				);
+			});
 	}
 });
