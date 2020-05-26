@@ -5,6 +5,7 @@ const accessToken = localStorage.getItem(LOCALSTORAGE_ACCESS_TOKEN_KEY);
 
 var spotifyApi = new SpotifyWebApi();
 var currentSongMs = 0;
+var songAnaysis;
 spotifyApi.setAccessToken(localStorage.getItem(LOCALSTORAGE_ACCESS_TOKEN_KEY));
 
 //gets the current playing song, shows title and pixelated image
@@ -41,25 +42,11 @@ function getSongAnalysis(songId) {
 var even = true,
 	even2 = true;
 function testDisplayAnalysis(data) {
-	data.sections;
-	for (var sct of data.sections) {
-		setupSection(sct);
-	}
-	setTimeout(
-		(document.getElementById("sectionInfo").textContent = "done"),
-		(data.sections[data.sections.length - 1].start +
-			data.sections[data.sections.length - 1].duration) *
-			1000 -
-			currentSongMs
-	);
+	songAnaysis = data;
 
-	for (var beat of data.beats) {
-		setupBeat(beat);
-	}
-
-	for (var bar of data.bars) {
-		setupBeat(bar);
-	}
+	for (var sct of data.sections) setupSection(sct);
+	for (var beat of data.beats) setupBeat(beat);
+	for (var bar of data.bars) setupBar(bar);
 }
 
 function setupSection(section) {
@@ -83,7 +70,7 @@ function setupBeat(beat) {
 
 function setupBar(bar) {
 	setTimeout(() => {
-		document.getElementById("art2").style.filter = even
+		document.getElementById("art").style.filter = even
 			? "invert(100%)"
 			: "invert(0%)";
 		even = !even;
