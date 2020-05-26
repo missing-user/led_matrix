@@ -2,7 +2,7 @@ const staggerVisualizerEl = document.getElementById("stagger-visualizer");
 const staggerVisualizerEl2 = document.getElementById("stagger-visualizer2");
 const staggerVisualizerEl3 = document.getElementById("stagger-visualizer3");
 const fragment = document.createDocumentFragment();
-const grid = [14, 14];
+const grid = [16, 16];
 const col = grid[0];
 const row = grid[1];
 const numberOfElements = col * row;
@@ -49,6 +49,29 @@ function animateBar(duration) {
 		autoplay: true,
 		delay: anime.stagger(duration / row / 2, {
 			grid: grid,
+			from: 'first',
+			axis: 'x'
+		}),
+		scale: [{
+			value: .1,
+			easing: 'easeOutSine',
+			duration: duration / 4
+		}, {
+			value: 1,
+			easing: 'easeInOutQuad',
+			duration: duration / 4
+		}],
+	})
+}
+
+function animateSection(duration, loudness) {
+	anime({
+		targets: "#stagger-visualizer3 div",
+		easing: 'easeInOutSine',
+		loop: false,
+		autoplay: true,
+		delay: anime.stagger(duration / row / 2, {
+			grid: grid,
 			from: 'first'
 		}),
 		scale: [{
@@ -58,29 +81,8 @@ function animateBar(duration) {
 		}, {
 			value: 1,
 			easing: 'easeInOutQuad',
-			duration: duration / 2
-		}],
-	})
-}
-
-function animateSection(duration) {
-	anime({
-		targets: "#stagger-visualizer3 div",
-		easing: 'easeInOutSine',
-		loop: false,
-		autoplay: true,
-		delay: anime.stagger(duration / row / 2, {
-			grid: grid,
-			from: 'last'
-		}),
-		scale: [{
-			value: .1,
-			easing: 'easeOutSine',
-			duration: duration / 4
-		}, {
-			value: 1,
-			easing: 'easeInOutQuad',
 			duration: duration / 4
 		}],
+		background: 'hsl(' + ~~(loudness) + ', 84%, 73%)'
 	})
 }

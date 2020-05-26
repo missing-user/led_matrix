@@ -9,6 +9,7 @@ spotifyApi.setAccessToken(localStorage.getItem(LOCALSTORAGE_ACCESS_TOKEN_KEY));
 //gets the current playing song, shows title and pixelated image
 function getCurrSongInfo() {
 	for (var t of timeouts) clearTimeout(t);
+	timeouts = []
 	spotifyApi.getMyCurrentPlayingTrack()
 		.then(function (data) {
 			console.log("current song", data);
@@ -48,22 +49,19 @@ function setupSection(section) {
 	timeouts.push(setTimeout(() => {
 		document.getElementById("sectionInfo")
 			.textContent = `duration: ${section.duration},\n time signature: ${section.time_signature},\n loudness: ${section.loudness}`;
-		console.log("section");
-		animateSection(section.duration * 1000)
+		animateSection(section.duration * 1000, Math.exp(section.loudness) * 30000)
 	}, section.start * 1000 - currentSongMs));
 }
 
 function setupBeat(beat) {
 	timeouts.push(setTimeout(() => {
 		animateBeat(beat.duration * 1000)
-		console.log("beat");
 	}, beat.start * 1000 - currentSongMs));
 }
 
 function setupBar(bar) {
 	timeouts.push(setTimeout(() => {
 		animateBar(bar.duration * 1000)
-		console.log("bar");
 	}, bar.start * 1000 - currentSongMs));
 }
 getCurrSongInfo();
