@@ -1,6 +1,13 @@
-const LOCALSTORAGE_ACCESS_TOKEN_KEY = "spotify-audio-analysis-playback-token";
+const LOCALSTORAGE_ACCESS_TOKEN_KEY = "spotify-led-matrix-token";
 const LOCALSTORAGE_ACCESS_TOKEN_EXPIRY_KEY =
-	"spotify-audio-analysis-playback-token-expires-in";
+	"spotify-led-matrix-token-expires-in";
+const jssdkscopes = [
+	"streaming",
+	"user-read-birthdate",
+	"user-read-email",
+	"user-read-private",
+	"user-modify-playback-state"
+];
 
 function parseHash(hash) {
 	return hash
@@ -42,7 +49,13 @@ document.addEventListener("DOMContentLoaded", () => {
 			.getElementById("spotifyBtn")
 			.addEventListener("click", function(e) {
 				e.preventDefault();
-				fetch("/spotifyRedirectUri")
+				fetch("https://accounts.spotify.com/authorize?", {
+					client_id: "052c0d00a1cb4a7e8f63037443b7aee1",
+					response_type: "token",
+					scope: jssdkscopes.join(" "),
+					redirect_uri: "https://missing-user.github.io/led_matrix/",
+					show_dialog: true
+				})
 					.then(e => e.json())
 					.then(data => {
 						window.location = data.redirectUri;

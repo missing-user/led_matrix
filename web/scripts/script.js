@@ -1,6 +1,6 @@
-const LOCALSTORAGE_ACCESS_TOKEN_KEY = "spotify-audio-analysis-playback-token";
+const LOCALSTORAGE_ACCESS_TOKEN_KEY = "spotify-led-matrix-token";
 const LOCALSTORAGE_ACCESS_TOKEN_EXPIRY_KEY =
-	"spotify-audio-analysis-playback-token-expires-in";
+	"spotify-led-matrix-token-expires-in";
 const accessToken = localStorage.getItem(LOCALSTORAGE_ACCESS_TOKEN_KEY);
 
 fetch("https://api.spotify.com/v1/me/player/currently-playing", {
@@ -14,9 +14,9 @@ fetch("https://api.spotify.com/v1/me/player/currently-playing", {
 		console.log(json);
 		document.getElementById("track_name").textContent = json.item.name;
 		var image = json.item.album.images.pop() || {
-			height: 256,
-			url: "https://via.placeholder.com/256",
-			width: 256
+			height: 128,
+			url: "https://via.placeholder.com/128",
+			width: 128
 		};
 		console.log(image);
 		ResizeImage(image.url);
