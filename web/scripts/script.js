@@ -4,6 +4,7 @@ const LOCALSTORAGE_ACCESS_TOKEN_EXPIRY_KEY =
 const accessToken = localStorage.getItem(LOCALSTORAGE_ACCESS_TOKEN_KEY);
 
 var spotifyApi = new SpotifyWebApi();
+var currentSongMs = 0;
 spotifyApi.setAccessToken(localStorage.getItem(LOCALSTORAGE_ACCESS_TOKEN_KEY));
 
 //gets the current playing song, shows title and pixelated image
@@ -17,8 +18,8 @@ function getCurrSongInfo() {
 					document.getElementById("track_name").textContent = data.item.name;
 					//get the last (lowest resolution) image from the album images list
 					var image = data.item.album.images.pop();
-					console.log(image);
 					pixelateAndDisplay(image.url);
+					currentSongMs = data.progress_ms;
 					return data.item.id;
 				}
 				return null;
@@ -47,7 +48,8 @@ function testDisplayAnalysis(data) {
 		(document.getElementById("sectionInfo").textContent = "done"),
 		(data.sections[data.sections.length - 1].start +
 			data.sections[data.sections.length - 1].duration) *
-			1000
+			1000 -
+			currentSongMs
 	);
 
 	for (var beat of data.beats) {
@@ -61,7 +63,7 @@ function setupSection(section) {
 			(document.getElementById(
 				"sectionInfo"
 			).textContent = `duration: ${section.duration},\n time signature: ${section.time_signature},\n loudness: ${section.loudness}`),
-		section.start * 1000
+		section.start * 1000 - currentSongMs
 	);
 }
 
@@ -74,7 +76,6 @@ function setupBeat(beat) {
 	}, beat.start * 1000);
 }
 
-testDisplayAnalysis();
 getCurrSongInfo();
 
 //image pixelization stuff
