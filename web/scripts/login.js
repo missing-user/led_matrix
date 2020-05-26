@@ -1,7 +1,10 @@
 const LOCALSTORAGE_ACCESS_TOKEN_KEY = "spotify-led-matrix-token";
 const LOCALSTORAGE_ACCESS_TOKEN_EXPIRY_KEY =
 	"spotify-led-matrix-token-expires-in";
-const jssdkscopes = ["user-read-email", "user-modify-playback-state"];
+const jssdkscopes = [
+	"user-modify-playback-state",
+	"user-read-currently-playing"
+];
 
 function parseHash(hash) {
 	return hash
