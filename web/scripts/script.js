@@ -63,22 +63,22 @@ function testDisplayAnalysis(data) {
 }
 
 function setupSection(section) {
-	setTimeout(
-		() =>
-			(document.getElementById(
-				"sectionInfo"
-			).textContent = `duration: ${section.duration},\n time signature: ${section.time_signature},\n loudness: ${section.loudness}`),
-		section.start * 1000 - currentSongMs
-	);
+	setTimeout(() => {
+		document.getElementById(
+			"sectionInfo"
+		).textContent = `duration: ${section.duration},\n time signature: ${section.time_signature},\n loudness: ${section.loudness}`;
+		console.log("section");
+	}, section.start * 1000 - currentSongMs);
 }
 
 function setupBeat(beat) {
 	setTimeout(() => {
-		document.getElementById("art2").style.filter = even
+		document.getElementById("art2").style.filter = even2
 			? "invert(100%)"
 			: "invert(0%)";
 		even2 = !even2;
-	}, beat.start * 1000);
+		console.log("beat");
+	}, beat.start * 1000 - currentSongMs);
 }
 
 function setupBar(bar) {
@@ -87,7 +87,8 @@ function setupBar(bar) {
 			? "invert(100%)"
 			: "invert(0%)";
 		even = !even;
-	}, bar.start * 1000);
+		console.log("bar");
+	}, bar.start * 1000 - currentSongMs);
 }
 
 getCurrSongInfo();
@@ -100,6 +101,8 @@ var ctx = canvas.getContext("2d");
 function pixelateAndDisplay(url) {
 	img.crossOrigin = "anonymous";
 	img.src = url;
+	document.getElementById("art2").src = url;
+	document.getElementById("art").src = url;
 	img.onload = function() {
 		canvas.height = img.height * 4;
 		canvas.width = img.width * 4;
