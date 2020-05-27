@@ -50,22 +50,18 @@ function displayAnalysis(data) {
 
 function setupSection(section) {
 	startTime = section.start * 1000 - currentSongMs;
-	if (startTime > 0)
-		timeouts.push(
-			setTimeout(() => {
-				//set the description text for this section
-				document.getElementById(
-					"sectionInfo"
-				).textContent = `duration: ${section.duration}, time signature: ${section.time_signature}, loudness: ${section.loudness}, bpm: ${songAnaysis.track.tempo}`;
-				CurrentMusic.time_signature = section.time_signature;
-				even = !even;
-				//animate the small section visualizer
-				animateSection(
-					section.duration * 1000,
-					Math.exp(section.loudness) * 30000
-				);
-			}, startTime)
-		);
+	timeouts.push(
+		setTimeout(() => {
+			console.log("SECTION");
+			//set the description text for this section
+			document.getElementById(
+				"sectionInfo"
+			).textContent = `duration: ${section.duration}, time signature: ${section.time_signature}, loudness: ${section.loudness}, bpm: ${songAnaysis.track.tempo}`;
+			CurrentMusic.time_signature = section.time_signature;
+			even = !even;
+			//animate the small section visualizer
+		}, startTime)
+	);
 }
 
 function setupBeat(beat) {
@@ -73,7 +69,7 @@ function setupBeat(beat) {
 	if (startTime > 0)
 		timeouts.push(
 			setTimeout(() => {
-				animateBeat(beat.duration * 1000);
+				console.log("beat");
 			}, startTime)
 		);
 }
@@ -83,7 +79,7 @@ function setupBar(bar) {
 	if (startTime > 0)
 		timeouts.push(
 			setTimeout(() => {
-				animateBar(bar.duration * 1000);
+				console.log("BAR");
 				rotation++;
 				CurrentMusic.startDate = Date.now();
 				CurrentMusic.duration = bar.duration * 1000;

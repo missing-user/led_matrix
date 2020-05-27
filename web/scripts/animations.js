@@ -1,99 +1,7 @@
-const staggerVisualizerEl = document.getElementById("stagger-visualizer");
-const staggerVisualizerEl2 = document.getElementById("stagger-visualizer2");
-const staggerVisualizerEl3 = document.getElementById("stagger-visualizer3");
-const fragment = document.createDocumentFragment();
 const grid = [16, 16];
 const col = grid[0];
 const row = grid[1];
 const numberOfElements = col * row;
-
-for (let i = 0; i < numberOfElements; i++) {
-	fragment.appendChild(document.createElement("div"));
-}
-staggerVisualizerEl.appendChild(fragment);
-for (let i = 0; i < numberOfElements; i++) {
-	fragment.appendChild(document.createElement("div"));
-}
-staggerVisualizerEl2.appendChild(fragment);
-for (let i = 0; i < numberOfElements; i++) {
-	fragment.appendChild(document.createElement("div"));
-}
-staggerVisualizerEl3.appendChild(fragment);
-
-function animateBeat(duration) {
-	anime({
-		targets: "#stagger-visualizer2 div",
-		easing: "easeInOutSine",
-		loop: false,
-		autoplay: true,
-		delay: anime.stagger(duration / row / 2, {
-			grid: grid,
-			from: "center"
-		}),
-		scale: [
-			{
-				value: 0.1,
-				easing: "easeOutSine",
-				duration: duration / 4
-			},
-			{
-				value: 1,
-				easing: "easeInOutQuad",
-				duration: duration / 2
-			}
-		]
-	});
-}
-function animateBar(duration) {
-	anime({
-		targets: "#stagger-visualizer div",
-		easing: "easeInOutSine",
-		loop: false,
-		autoplay: true,
-		delay: anime.stagger(duration / row / 2, {
-			grid: grid,
-			from: "first",
-			axis: "x"
-		}),
-		scale: [
-			{
-				value: 0.1,
-				easing: "easeOutSine",
-				duration: duration / 4
-			},
-			{
-				value: 1,
-				easing: "easeInOutQuad",
-				duration: duration / 4
-			}
-		]
-	});
-}
-function animateSection(duration, loudness) {
-	anime({
-		targets: "#stagger-visualizer3 div",
-		easing: "easeInOutSine",
-		loop: false,
-		autoplay: true,
-		delay: anime.stagger(duration / row / 2, {
-			grid: grid,
-			from: "first"
-		}),
-		scale: [
-			{
-				value: 0.1,
-				easing: "easeOutSine",
-				duration: duration / 4
-			},
-			{
-				value: 1,
-				easing: "easeInOutQuad",
-				duration: duration / 4
-			}
-		],
-		background: "hsl(" + ~~loudness + ", 84%, 73%)"
-	});
-}
 
 //drawing the canvas matrix
 var canvasMatrix = document.getElementById("canvasMatrix");
@@ -149,12 +57,31 @@ Math.clamp = function(number, min = 0, max = 1) {
 setInterval(function() {
 	timePercent =
 		((Date.now() - CurrentMusic.startDate) / CurrentMusic.duration) % 1;
+
+	// TODO: since the effect are timed ina a way to be completely offscreen by the
+	// time the bar is over, their timing isnt in sync with the beats, eventhough 4 beats = 4 arrows
+	//(but the arrows are over fast and then have a pause while the beats are evenly spaced)
 	if (even) Effects.arrow(timePercent, CurrentMusic.time_signature);
-	else Effects.wave(timePercent, CurrentMusic.time_signature);
+	else
+		Effects.wave(
+			timePercent,
+			CurrentMusic.time_signature,
+			EasingFunctions.linear
+		);
 
 	leds = rotateMatrix90(rotation);
 	drawCanvasMatrix();
 }, 10);
+
+function getCoverColors() {
+	pix = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+
+	for (var i = 0; i < pix.length; i += 4 * 16) {
+		leds[i / 16].r = pix[i];
+		leds[i / 16].g = pix[i + 1];
+		leds[i / 16].b = pix[i + 2];
+	}
+}
 
 function drawCanvasMatrix() {
 	size = 50;
@@ -214,6 +141,7 @@ CurrentMusic = {
 };
 
 EasingFunctions = {
+	inverse: t => 1 - t,
 	// no easing, no acceleration
 	linear: t => t,
 	// accelerating from zero velocity
@@ -229,19 +157,14 @@ EasingFunctions = {
 	// acceleration until halfway, then deceleration
 	easeInOutCubic: t =>
 		t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1,
-	// accelerating from zero velocity
-	easeInQuart: t => t * t * t * t,
-	// decelerating to zero velocity
-	easeOutQuart: t => 1 - --t * t * t * t,
-	// acceleration until halfway, then deceleration
-	easeInOutQuart: t => (t < 0.5 ? 8 * t * t * t * t : 1 - 8 * --t * t * t * t),
-	// accelerating from zero velocity
-	easeInQuint: t => t * t * t * t * t,
-	// decelerating to zero velocity
-	easeOutQuint: t => 1 + --t * t * t * t * t,
-	// acceleration until halfway, then deceleration
-	easeInOutQuint: t =>
-		t < 0.5 ? 16 * t * t * t * t * t : 1 + 16 * --t * t * t * t * t,
 	gaussianFit: t =>
-		0.257 * t + 14.717 * t * t - 29.947 * t * t * t + 14.973 * t * t * t * t
+		0.257 * t + 14.717 * t * t - 29.947 * t * t * t + 14.973 * t * t * t * t,
+	triangle: t => (t < 0.5 ? t * 2 : 2 - t * 2),
+	spikeInQuad: t => EasingFunctions.easeInQuad(EasingFunctions.triangle(t)),
+	spikeOutQuad: t => EasingFunctions.easeOutQuad(EasingFunctions.triangle(t)),
+	spikeInOutQuad: t =>
+		EasingFunctions.easeInOutQuad(EasingFunctions.triangle(t)),
+	spikeInCubic: t => EasingFunctions.easeInCubic(EasingFunctions.triangle(t)),
+	spikeInOutCubic: t =>
+		EasingFunctions.easeInOutCubic(EasingFunctions.triangle(t))
 };
