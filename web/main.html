@@ -24,42 +24,21 @@
 
       <div class="row">
         <div class="one-half column">
-          <button type="button" class="button-primary" name="button" onclick="getCurrSongInfo()">update</button>
+          <h3 id="track_name">track title</h3>
+          <canvas id="canvas" class="u-full-width" width="256" height="256"></canvas>
         </div>
         <div class="one-half column">
-          <p id="sectionInfo"></p>
+          <h3>Preview</h3>
+          <canvas id="canvasMatrix" class="u-full-width" width="960" height="960"></canvas>
+
         </div>
       </div>
 
       <div class="row">
-        <div class="one-half column">
-          <h3 id="track_name">track title</h3>
-          <canvas id="canvas" class="u-full-width"></canvas>
-        </div>
-        <div class="one-half column">
-          <h3>Section</h3>
-          <div class="u-full-width">
-            <div class="stagger-visualizer" id="stagger-visualizer3"></div>
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="one-half column">
-          <h3>bars</h3>
-          <div class="u-full-width">
-            <div class="stagger-visualizer" id="stagger-visualizer"></div>
-          </div>
-        </div>
-        <div class="one-half column">
-          <h3>beats</h3>
-          <div class="u-full-width">
-            <div class="stagger-visualizer" id="stagger-visualizer2"></div>
-          </div>
-        </div>
-      </div>
-      <div class="row">
         <div class="twelve columns">
-          <canvas id="canvasMatrix" class="u-full-width" width="960" height="960"></canvas>
+          <h3>Section</h3>
+          <p id="sectionInfo"></p>
+          <button type="button" class="button-primary" name="button" onclick="getCurrSongInfo()">update</button>
         </div>
       </div>
     </div>

@@ -23,21 +23,3 @@
   vertical-align: middle;
   text-decoration: none;
 }
-
-.stagger-visualizer {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  width: 20rem;
-  height: 20rem;
-  margin: 1rem;
-}
-
-.stagger-visualizer div {
-  /*position: absolute;*/
-  width: 1rem;
-  height: 1rem;
-  margin: 1px;
-  background-color: #FFF;
-}
