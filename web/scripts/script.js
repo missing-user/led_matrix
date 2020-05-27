@@ -74,7 +74,7 @@ function setupBeat(beat) {
 			setTimeout(() => {
 				console.log("beat");
 				CurrentMusic.startDate = Date.now();
-				CurrentMusic.duration = bar.duration * 1000;
+				CurrentMusic.duration = beat.duration * 1000;
 			}, startTime)
 		);
 }
