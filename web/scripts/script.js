@@ -57,7 +57,10 @@ function setupSection(section) {
 			document.getElementById(
 				"sectionInfo"
 			).textContent = `duration: ${section.duration}, time signature: ${section.time_signature}, loudness: ${section.loudness}, bpm: ${songAnaysis.track.tempo}`;
-			CurrentMusic.time_signature = section.time_signature;
+			//CurrentMusic.time_signature = section.time_signature;
+			if (songAnaysis.track.tempo > 100) CurrentMusic.time_signature = 1;
+			else CurrentMusic.time_signature = 2;
+
 			even = !even;
 			//animate the small section visualizer
 		}, startTime)
@@ -70,6 +73,8 @@ function setupBeat(beat) {
 		timeouts.push(
 			setTimeout(() => {
 				console.log("beat");
+				CurrentMusic.startDate = Date.now();
+				CurrentMusic.duration = bar.duration * 1000;
 			}, startTime)
 		);
 }
@@ -81,8 +86,6 @@ function setupBar(bar) {
 			setTimeout(() => {
 				console.log("BAR");
 				rotation++;
-				CurrentMusic.startDate = Date.now();
-				CurrentMusic.duration = bar.duration * 1000;
 			}, startTime)
 		);
 }
