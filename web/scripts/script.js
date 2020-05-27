@@ -1,5 +1,6 @@
 const LOCALSTORAGE_ACCESS_TOKEN_KEY = "spotify-led-matrix-token";
-const LOCALSTORAGE_ACCESS_TOKEN_EXPIRY_KEY = "spotify-led-matrix-token-expires-in";
+const LOCALSTORAGE_ACCESS_TOKEN_EXPIRY_KEY =
+	"spotify-led-matrix-token-expires-in";
 const accessToken = localStorage.getItem(LOCALSTORAGE_ACCESS_TOKEN_KEY);
 var spotifyApi = new SpotifyWebApi();
 var currentSongMs = 0;
@@ -9,36 +10,38 @@ spotifyApi.setAccessToken(localStorage.getItem(LOCALSTORAGE_ACCESS_TOKEN_KEY));
 //gets the current playing song, shows title and pixelated image
 function getCurrSongInfo() {
 	for (var t of timeouts) clearTimeout(t);
-	timeouts = []
-	spotifyApi.getMyCurrentPlayingTrack()
-		.then(function (data) {
-			console.log("current song", data);
-			if (data) {
-				document.getElementById("track_name")
-					.textContent = data.item.name;
-				//get the last (lowest resolution) image from the album images list
-				var image = data.item.album.images.pop();
-				pixelateAndDisplay(image.url);
-				currentSongMs = data.progress_ms;
-				return data.item.id;
+	timeouts = [];
+	spotifyApi
+		.getMyCurrentPlayingTrack()
+		.then(
+			function(data) {
+				console.log("current song", data);
+				if (data) {
+					document.getElementById("track_name").textContent = data.item.name;
+					//get the last (lowest resolution) image from the album images list
+					var image = data.item.album.images.pop();
+					pixelateAndDisplay(image.url);
+					currentSongMs = data.progress_ms;
+					return data.item.id;
+				}
+				return null;
+			},
+			function(err) {
+				console.error(err);
 			}
-			return null;
-		}, function (err) {
-			console.error(err);
-		})
+		)
 		.then(getSongAnalysis);
 }
 
 function getSongAnalysis(songId) {
-	spotifyApi.getAudioAnalysisForTrack(songId)
-		.then(
-			//do something with json
-			testDisplayAnalysis);
+	spotifyApi.getAudioAnalysisForTrack(songId).then(
+		//do something with json
+		displayAnalysis
+	);
 }
-var even = true,
-	even2 = true;
+var even = false;
 
-function testDisplayAnalysis(data) {
+function displayAnalysis(data) {
 	songAnaysis = data;
 	for (var sct of data.sections) setupSection(sct);
 	for (var beat of data.beats) setupBeat(beat);
@@ -46,23 +49,46 @@ function testDisplayAnalysis(data) {
 }
 
 function setupSection(section) {
-	timeouts.push(setTimeout(() => {
-		document.getElementById("sectionInfo")
-			.textContent = `duration: ${section.duration},\n time signature: ${section.time_signature},\n loudness: ${section.loudness}`;
-		animateSection(section.duration * 1000, Math.exp(section.loudness) * 30000)
-	}, section.start * 1000 - currentSongMs));
+	startTime = section.start * 1000 - currentSongMs;
+	if (startTime > 0)
+		timeouts.push(
+			setTimeout(() => {
+				//set the description text for this section
+				document.getElementById(
+					"sectionInfo"
+				).textContent = `duration: ${section.duration}, time signature: ${section.time_signature}, loudness: ${section.loudness}, bpm: ${songAnaysis.track.tempo}`;
+				CurrentMusic.time_signature = section.time_signature;
+				even = !even;
+				//animate the small section visualizer
+				animateSection(
+					section.duration * 1000,
+					Math.exp(section.loudness) * 30000
+				);
+			}, startTime)
+		);
 }
 
 function setupBeat(beat) {
-	timeouts.push(setTimeout(() => {
-		animateBeat(beat.duration * 1000)
-	}, beat.start * 1000 - currentSongMs));
+	startTime = beat.start * 1000 - currentSongMs;
+	if (startTime > 0)
+		timeouts.push(
+			setTimeout(() => {
+				animateBeat(beat.duration * 1000);
+			}, startTime)
+		);
 }
 
 function setupBar(bar) {
-	timeouts.push(setTimeout(() => {
-		animateBar(bar.duration * 1000)
-	}, bar.start * 1000 - currentSongMs));
+	startTime = bar.start * 1000 - currentSongMs;
+	if (startTime > 0)
+		timeouts.push(
+			setTimeout(() => {
+				animateBar(bar.duration * 1000);
+				rotation++;
+				CurrentMusic.startDate = Date.now();
+				CurrentMusic.duration = bar.duration * 1000;
+			}, startTime)
+		);
 }
 getCurrSongInfo();
 //image pixelization stuff
@@ -73,11 +99,11 @@ var ctx = canvas.getContext("2d");
 function pixelateAndDisplay(url) {
 	img.crossOrigin = "anonymous";
 	img.src = url;
-	img.onload = function () {
+	img.onload = function() {
 		canvas.height = img.height * 4;
 		canvas.width = img.width * 4;
 		ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-		setTimeout(pixelate, 750);
+		pixelate();
 	};
 }
 
@@ -93,3 +119,5 @@ function pixelate() {
 	ctx.imageSmoothingEnabled = false;
 	ctx.drawImage(canvas, 0, 0, w, h, 0, 0, canvas.width, canvas.height);
 }
+// DEBUG: this is just for local testing
+setTimeout(displayAnalysis, 500, testdata);
