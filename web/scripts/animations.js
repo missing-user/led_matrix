@@ -10,7 +10,7 @@ let leds = [];
 let rotation = 0;
 
 for (var i = 0; i < row * col; i++) {
-	leds.push({ r: 1, g: 1, b: 1, v: 1 });
+	leds.push({ r: 255, g: 255, b: 255, v: 1 });
 }
 
 function fromXY(x, y) {
@@ -128,11 +128,11 @@ setInterval(function() {
 	drawCanvasMatrix();
 }, 10);
 
-function fillColor(r, g, b) {
+function fillColor(col) {
 	for (var led of leds) {
-		led.r = r;
-		led.g = g;
-		led.b = b;
+		led.r = col[0];
+		led.g = col[1];
+		led.b = col[2];
 	}
 }
 
@@ -147,11 +147,11 @@ function drawCanvasMatrix() {
 
 		ctx2.fillStyle = [
 			"rgb(",
-			~~(leds[i].r * 255),
+			~~leds[i].r,
 			", ",
-			~~(leds[i].g * 255),
+			~~leds[i].g,
 			", ",
-			~~(leds[i].b * 255),
+			~~leds[i].b,
 			")"
 		].join("");
 		//create centered, scaled square grid with a 10px margin
@@ -241,9 +241,9 @@ Effects = {
 			leds[i].v = ease(Math.clamp(eval - distFromCenter + 0.5));
 		}
 	},
-	strobe: (timePercent, ease = EasingFunctions.strobe) => {
+	strobe: (timePercent, ease = EasingFunctions.triangle) => {
 		for (var i = 0; i < leds.length; i++) {
-			leds[i].v = ease(timePercent);
+			leds[i].v = Math.clamp(ease(timePercent * 2));
 		}
 	}
 };
@@ -282,6 +282,5 @@ EasingFunctions = {
 		EasingFunctions.easeInOutQuad(EasingFunctions.triangle(t)),
 	spikeInCubic: t => EasingFunctions.easeInCubic(EasingFunctions.triangle(t)),
 	spikeInOutCubic: t =>
-		EasingFunctions.easeInOutCubic(EasingFunctions.triangle(t)),
-	strobe: t => (t > 0 && t < 0.05 ? 1 : 0)
+		EasingFunctions.easeInOutCubic(EasingFunctions.triangle(t))
 };
