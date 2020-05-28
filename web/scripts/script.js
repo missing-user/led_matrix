@@ -39,7 +39,7 @@ function getSongAnalysis(songId) {
 		displayAnalysis
 	);
 }
-var even = false;
+var effect = 12;
 
 function displayAnalysis(data) {
 	songAnaysis = data;
@@ -61,7 +61,7 @@ function setupSection(section) {
 			if (songAnaysis.track.tempo > 100) CurrentMusic.time_signature = 1;
 			else CurrentMusic.time_signature = 2;
 
-			even = !even;
+			effect = ~~(Math.random() * 14);
 			//animate the small section visualizer
 		}, startTime)
 	);
@@ -72,13 +72,12 @@ function setupBeat(beat) {
 	if (startTime > 0)
 		timeouts.push(
 			setTimeout(() => {
-				console.log("beat");
 				CurrentMusic.startDate = Date.now();
 				CurrentMusic.duration = beat.duration * 1000;
 			}, startTime)
 		);
 }
-
+var color = 1;
 function setupBar(bar) {
 	startTime = bar.start * 1000 - currentSongMs;
 	if (startTime > 0)
@@ -86,6 +85,12 @@ function setupBar(bar) {
 			setTimeout(() => {
 				console.log("BAR");
 				rotation++;
+				if (color == 1) fillColor(0, 0, 1);
+				else if (color == 2) fillColor(0, 1, 0);
+				else if (color == 3) fillColor(1, 0, 0);
+				else fillColor(1, 1, 1);
+				color++;
+				color = color % 4;
 			}, startTime)
 		);
 }
