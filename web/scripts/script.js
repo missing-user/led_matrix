@@ -85,12 +85,10 @@ function setupBar(bar) {
 			setTimeout(() => {
 				console.log("BAR");
 				rotation++;
-				if (color == 1) fillColor(0, 0, 1);
-				else if (color == 2) fillColor(0, 1, 0);
-				else if (color == 3) fillColor(1, 0, 0);
-				else fillColor(1, 1, 1);
+				//set to new color from palette
+				fillColor(palette[color]);
 				color++;
-				color = color % 4;
+				color = color % palette.length;
 			}, startTime)
 		);
 }
@@ -100,10 +98,16 @@ var img = new Image();
 var canvas = document.getElementById("canvas");
 var ctx = canvas.getContext("2d");
 
+const colorThief = new ColorThief();
+var palette = [[255, 255, 255]];
+
 function pixelateAndDisplay(url) {
 	img.crossOrigin = "anonymous";
 	img.src = url;
 	img.onload = function() {
+		//get the dominant colors in the image
+		palette = colorThief.getPalette(img);
+
 		canvas.height = img.height * 4;
 		canvas.width = img.width * 4;
 		ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
