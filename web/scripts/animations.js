@@ -145,7 +145,7 @@ function drawCanvasMatrix() {
 	for (var i = 0; i < leds.length; i++) {
 		offset = (size * leds[i].v) / 2;
 
-		ctx2.fillStyle = [
+		/*ctx2.fillStyle = [
 			"rgb(",
 			~~leds[i].r,
 			", ",
@@ -160,6 +160,23 @@ function drawCanvasMatrix() {
 			(XY(i).y + 0.5) * (size + margin) - offset,
 			size * leds[i].v + 4,
 			size * leds[i].v + 4
+		);*/
+
+		ctx2.fillStyle = [
+			"rgb(",
+			~~(leds[i].r * leds[i].v),
+			", ",
+			~~(leds[i].g * leds[i].v),
+			", ",
+			~~(leds[i].b * leds[i].v),
+			")"
+		].join("");
+		//create centered, scaled square grid with a 10px margin
+		ctx2.fillRect(
+			(XY(i).x + 0.5) * (size + margin),
+			(XY(i).y + 0.5) * (size + margin),
+			size,
+			size
 		);
 	}
 }
