@@ -39,7 +39,7 @@ function getSongAnalysis(songId) {
 		displayAnalysis
 	);
 }
-var effect = 12;
+var effect = 0;
 
 function displayAnalysis(data) {
 	songAnaysis = data;
@@ -61,7 +61,7 @@ function setupSection(section) {
 			if (songAnaysis.track.tempo > 100) CurrentMusic.time_signature = 1;
 			else CurrentMusic.time_signature = 2;
 
-			effect = ~~(Math.random() * 14);
+			effect = ~~(Math.random() * 15);
 			//animate the small section visualizer
 		}, startTime)
 	);

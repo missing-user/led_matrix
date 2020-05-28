@@ -61,7 +61,7 @@ setInterval(function() {
 	// TODO: since the effect are timed ina a way to be completely offscreen by the
 	// time the bar is over, their timing isnt in sync with the beats, eventhough 4 beats = 4 arrows
 	//(but the arrows are over fast and then have a pause while the beats are evenly spaced)
-	switch (effect % 14) {
+	switch (effect % 15) {
 		case 1:
 			Effects.circleInwards(timePercent);
 			break;
@@ -112,6 +112,9 @@ setInterval(function() {
 				CurrentMusic.time_signature,
 				EasingFunctions.easeInOutCubic
 			);
+			break;
+		case 14:
+			Effects.strobe(timePercent);
 			break;
 		default:
 			Effects.arrow(
@@ -237,6 +240,11 @@ Effects = {
 
 			leds[i].v = ease(Math.clamp(eval - distFromCenter + 0.5));
 		}
+	},
+	strobe: (timePercent, ease = EasingFunctions.strobe) => {
+		for (var i = 0; i < leds.length; i++) {
+			leds[i].v = ease(timePercent);
+		}
 	}
 };
 
@@ -274,5 +282,6 @@ EasingFunctions = {
 		EasingFunctions.easeInOutQuad(EasingFunctions.triangle(t)),
 	spikeInCubic: t => EasingFunctions.easeInCubic(EasingFunctions.triangle(t)),
 	spikeInOutCubic: t =>
-		EasingFunctions.easeInOutCubic(EasingFunctions.triangle(t))
+		EasingFunctions.easeInOutCubic(EasingFunctions.triangle(t)),
+	strobe: t => (t > 0 && t < 0.05 ? 1 : 0)
 };
