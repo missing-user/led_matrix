@@ -48,23 +48,28 @@ def to8bitRgb(floatList):
     return [(math.floor(i[0] * 255), math.floor(i[1] * 255), math.floor(i[2] * 255)) for i in floatList]
 
 
-def loop():
-    global totalTime
-    time.sleep(0.007)
-    totalTime += 0.007
-    # draw pixels takes an array of RGB touples
-    if totalTime < 0:
-        display.drawPixels(list(img.getdata()))
-    else:
+import time
+start_time = time.time()
+iterations = 0
 
+
+def loop():
+    display.drawPixels(list(img.getdata()))
+
+    while True:
+        totalTime = time.time() - start_time
+
+        # draw pixels takes an array of RGB touples
         r = animations.curtain(totalTime % 1)
         g = animations.curtain((totalTime + 0.1) % 1)
         b = animations.curtain((totalTime + 0.2) % 1)
         display.drawPixels(to8bitRgb(merge(r, g, b)))
-        pass
-    display.update()
 
-    loop()
+        display.update()
+
+        global iterations
+        iterations += 1
+        print(time.time() - start_time, iterations)
 
 
 loop()
