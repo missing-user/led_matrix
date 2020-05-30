@@ -116,7 +116,8 @@ def circleInwardsSharp(timePercent, ease=easing.linear):
 
 
 def strobe(timePercent, ease=easing.triangle):
-    leds = [0] * col * row
-    for led in leds:
-        led = clamp(ease(timePercent * 2))
-    return leds
+    # leds = [0] * col * row
+    # for led in leds:
+    #     led = clamp(ease(timePercent * 2))
+    # return leds
+    return [clamp(ease(timePercent * 2))] * row * col
