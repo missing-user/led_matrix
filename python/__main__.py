@@ -52,20 +52,49 @@ import time
 start_time = time.time()
 iterations = 0
 
+times = [[], [], [], []]
+
+
+# FOR DEBUG
+
+def on_exit(a, b):
+    print("exit")
+    averages = [np.mean(l) * 1000 for l in times]
+    print("avg times", averages)
+    print("avg fps", iterations / (time.time() - start_time))
+    exit()
+
+
+import signal
+signal.signal(signal.SIGINT, on_exit)
+
 
 def loop():
+    """The main loop."""
     display.drawPixels(list(img.getdata()))
 
     while True:
         totalTime = time.time() - start_time
+        time0 = time.time()
+        times[0].append(time0)
 
         # draw pixels takes an array of RGB touples
+        # 25ms
         r = animations.curtain(totalTime % 1)
         g = animations.curtain((totalTime + 0.1) % 1)
         b = animations.curtain((totalTime + 0.2) % 1)
-        display.drawPixels(to8bitRgb(merge(r, g, b)))
+        time1 = time.time()
+        times[1].append(time1 - time0)
 
+        # 70ms
+        display.drawPixels(to8bitRgb(merge(r, g, b)))
+        time2 = time.time()
+        times[2].append(time2 - time1)
+
+        # 65ms
         display.update()
+        time3 = time.time()
+        times[3].append(time3 - time2)
 
         global iterations
         iterations += 1
