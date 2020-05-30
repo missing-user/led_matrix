@@ -2,7 +2,6 @@ import math
 import time
 
 import numpy as np
-from PIL import Image
 
 import animations
 
@@ -11,6 +10,7 @@ TESTING = True
 # import depending on production or testing
 if TESTING:
     # Testing
+    from PIL import Image
     # load a preview image
     try:
         global img
@@ -79,19 +79,19 @@ def loop():
         times[0].append(time0)
 
         # draw pixels takes an array of RGB touples
-        # 25ms
+        # 1ms
         r = animations.curtain(totalTime % 1)
         g = animations.curtain((totalTime + 0.1) % 1)
         b = animations.curtain((totalTime + 0.2) % 1)
         time1 = time.time()
         times[1].append(time1 - time0)
 
-        # 70ms
+        # 3ms
         display.drawPixels(to8bitRgb(merge(r, g, b)))
         time2 = time.time()
         times[2].append(time2 - time1)
 
-        # 65ms
+        # 11ms
         display.update()
         time3 = time.time()
         times[3].append(time3 - time2)
