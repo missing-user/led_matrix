@@ -8,6 +8,12 @@ def linear(t):
     return t
 
 
+def square(t):
+    if t >= 1 or t <= 0:
+        return 0
+    return 1
+
+
 def easeInQuad(t):
     """accelerating from zero velocity"""
     return t * t
@@ -75,3 +81,9 @@ def spikeInCubic(t):
 
 def spikeInOutCubic(t):
     return easeInOutCubic(triangle(t))
+
+
+def spikeSquare(t):
+    if t > 0 and t < 1 / 4:
+        return 1
+    return 0
