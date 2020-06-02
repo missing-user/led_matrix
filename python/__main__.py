@@ -4,15 +4,16 @@ import time
 
 import numpy as np
 
-import animations
+import animationChains as animChain
+import animations as anim
 import spotifyHandler
 
 TESTING = True
 row = 16
 col = 16
 
-animations.row = row
-animations.col = col
+anim.row = row
+anim.col = col
 
 # import depending on production or testing
 if TESTING:
@@ -23,8 +24,8 @@ if TESTING:
 
     # the canvas fits matrix and has a margin of [pixel_spacing] around the border
     master = Tk()
-    tileSize = 80
-    w = Canvas(master, width=row * (tileSize + 5), height=col * (tileSize + 2))
+    tileSize = 40
+    w = Canvas(master, width=row * (tileSize + 5), height=col * (tileSize + 5))
     w.pack()
 
     # setup
@@ -34,8 +35,6 @@ else:
     # Production
     import Led_display
     display = Led_display(row, col)
-
-totalTime = 0
 
 
 def merge(l1, l2, l3):
@@ -73,48 +72,50 @@ def loop():
         totalTime = time.time() - start_time
         time0 = time.time()
         times[0].append(time0)
-        totalTime = totalTime % 55
         # draw pixels takes an array of RGB touples
         # 1ms
 
         beatTimePercentage = (
             totalTime - spotifyHandler.currentSongTime) / spotifyHandler.beatTime
-        if totalTime < 4:
-            r = g = b = animations.gif(beatTimePercentage / 8 % 1)
-        elif totalTime < 8:
-            r = b = g = animations.doubleArrow(beatTimePercentage % 1)
-        elif totalTime < 12:
-            r = animations.arrow(beatTimePercentage % 1)
-            g = animations.rotateMatrix90(
-                animations.arrow(beatTimePercentage % 1), 2)
-            b = animations.rotateMatrix90(
-                animations.arrow(beatTimePercentage % 1), 1)
-        elif totalTime < 18:
-            r = animations.zipper(beatTimePercentage % 1)
-        elif totalTime < 22:
-            r = g = b = animations.diagonalWave(beatTimePercentage % 1)
-        elif totalTime < 26:
-            r = animations.circleInwards(beatTimePercentage / 2 % 1)
-            g = animations.circleInwards((beatTimePercentage) % 1)
-            b = animations.circleInwards(beatTimePercentage % 1)
-        elif totalTime < 32:
-            g = b = animations.gif(beatTimePercentage / 8 % 1, 3, 1)
-            r = animations.gif(beatTimePercentage / 8 % 1, 3, 0)
-
-        elif totalTime < 36:
-            g = b = animations.gif(beatTimePercentage / 8 % 1, 2)
-            r = animations.gif(beatTimePercentage / 8 % 1, 2)
-        elif totalTime < 40:
-            g = b = animations.gif(beatTimePercentage % 1, 1)
-            r = animations.strobe(beatTimePercentage % 1)
-        elif totalTime < 45:
-            g = b = r = animations.strobe(beatTimePercentage * 3 % 1)
-        elif totalTime < 50:
-            g = b = r = animations.curtain(
-                animations.easing.triangle(beatTimePercentage / 2 % 1))
-        elif totalTime < 55:
-            g = b = r = animations.rotateMatrix90(animations.curtain(
-                animations.easing.triangle(beatTimePercentage / 2 % 1)), 1)
+        beatTimePercentage = beatTimePercentage % 120
+        if beatTimePercentage < 12:
+            g = b = r = animChain.chain1(beatTimePercentage % 12)
+        elif beatTimePercentage < 18:
+            r = anim.arrow(beatTimePercentage)
+            g = anim.rotateMatrix90(
+                anim.arrow(beatTimePercentage), 2)
+            b = anim.rotateMatrix90(
+                anim.arrow(beatTimePercentage), 1)
+        elif beatTimePercentage < 22:
+            r = anim.zipper(beatTimePercentage)
+        elif beatTimePercentage < 26:
+            r = g = b = anim.diagonalWave(beatTimePercentage)
+        elif beatTimePercentage < 30:
+            r = anim.circleInwards(beatTimePercentage / 2)
+            g = b = anim.circleInwards((beatTimePercentage))
+        elif beatTimePercentage < 38:
+            g = b = anim.gif(beatTimePercentage / 8, "buildingCross8", 1)
+            r = anim.gif(beatTimePercentage / 8, "buildingCross8", 0)
+        elif beatTimePercentage < 46:
+            r = b = anim.gif(beatTimePercentage / 8, "cross")
+            g = anim.gif(beatTimePercentage / 8, "cross")
+        elif beatTimePercentage < 50:
+            g = r = anim.gif(beatTimePercentage, "compress")
+            b = anim.strobe(beatTimePercentage)
+        elif beatTimePercentage < 55:
+            g = b = r = anim.strobe(beatTimePercentage * 3)
+        elif beatTimePercentage < 60:
+            g = b = r = anim.curtain(
+                anim.easing.triangle(beatTimePercentage / 2))
+        elif beatTimePercentage < 65:
+            g = b = r = anim.rotateMatrix90(anim.curtain(
+                anim.easing.triangle(beatTimePercentage / 2)), 1)
+        elif beatTimePercentage < 71:
+            g = b = r = animChain.chain3(beatTimePercentage % 16)
+        elif beatTimePercentage < 71:
+            g = b = r = animChain.chain4(beatTimePercentage % 16)
+        else:
+            g = b = r = animChain.chain2(beatTimePercentage % 2)
 
         time1 = time.time()
         times[1].append(time1 - time0)

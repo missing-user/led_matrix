@@ -8,7 +8,15 @@ def linear(t):
     return t
 
 
+def linearCutoff(t):
+    """ starts off linear, but is 0 if time >= 1"""
+    if t >= 1:
+        return 0
+    return t
+
+
 def square(t):
+    """always 0 exept for t>=0 and t<=1"""
     if t >= 1 or t <= 0:
         return 0
     return 1
@@ -64,26 +72,32 @@ def triangle(t):
 
 
 def spikeInQuad(t):
+    """a mirrored quadratic ease"""
     return easeInQuad(triangle(t))
 
 
 def spikeOutQuad(t):
+    """a mirrored OutQuad ease"""
     return easeOutQuad(triangle(t))
 
 
 def spikeInOutQuad(t):
+    """a mirrored InOutQuad ease"""
     return easeInOutQuad(triangle(t))
 
 
 def spikeInCubic(t):
+    """a mirrored InCubic ease"""
     return easeInCubic(triangle(t))
 
 
 def spikeInOutCubic(t):
+    """a mirrored InOutCubic ease"""
     return easeInOutCubic(triangle(t))
 
 
 def spikeSquare(t):
+    """1 in the first fourth of the segment, 0 else"""
     if t > 0 and t < 1 / 4:
         return 1
     return 0

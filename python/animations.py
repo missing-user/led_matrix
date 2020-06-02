@@ -26,8 +26,22 @@ def XY(index):
     return [index % row, index // row]
 
 
-# rotates the given matrix by count 90deg increments
+def flipBottomHalf(leds):
+    for x in range(row):
+        for y in range(col // 2):
+            leds[fromXY(row - 1 - x, col - 1 - y)] = leds[fromXY(x, y)]
+    return leds
+
+
+def flipLeftHalf(leds):
+    for y in range(col):
+        for x in range(row // 2, row):
+            leds[fromXY(row - 1 - x, col - 1 - y)] = leds[fromXY(x, y)]
+    return leds
+
+
 def rotateMatrix90(input_leds, count):
+    """rotates the given matrix by count 90deg increments"""
     count = (count + 4) % 4
     rotated_leds = input_leds.copy()
     if count == 1:
@@ -49,6 +63,10 @@ def rotateMatrix90(input_leds, count):
     return rotated_leds
 
 
+def add(matrix1, matrix2):
+    return[matrix1[i] + matrix2[i] for i in range(len(matrix1))]
+
+
 def mirrorX(input_leds):
     for y in range(col):
         for x in range(row // 2):
@@ -67,6 +85,7 @@ def mirrorY(input_leds):
 
 def arrow(timePercent, iterations=1, ease=easing.gaussianFit):
     leds = [0] * col * row
+    timePercent = timePercent % 1
     # draw one diagonal half of the arrow
     for i in range(len(leds) // 2):
         eval = timePercent * (iterations + 1.5) - 1.5 + \
@@ -88,6 +107,7 @@ def arrow(timePercent, iterations=1, ease=easing.gaussianFit):
 
 def doubleArrow(timePercent, iterations=1, ease=easing.spikeSquare):
     leds = [0] * col * row
+    timePercent = timePercent % 1
     # draw one diagonal half of the arrow
     for i in range(len(leds) // 4):
         eval = timePercent * (iterations + 1.50) - 1.5 + \
@@ -104,15 +124,12 @@ def doubleArrow(timePercent, iterations=1, ease=easing.spikeSquare):
             leds[i] = ease(clamp(eval))
         else:
             leds[i] = ease(clamp(eval % 1))
-    # flip the bottom half to get opposing arrows
-    for x in range(row):
-        for y in range(col // 2):
-            leds[fromXY(row - 1 - x, col - 1 - y)] = leds[fromXY(x, y)]
-    return leds
+    return flipBottomHalf(leds)
 
 
 def diagonalWave(timePercent, iterations=1, ease=easing.gaussianFit):
     leds = [0] * col * row
+    timePercent = timePercent % 1
     for i in range(len(leds)):
         eval = timePercent * (iterations + 2) - 2 + \
             XY(i)[0] / row + XY(i)[1] / col
@@ -125,6 +142,7 @@ def diagonalWave(timePercent, iterations=1, ease=easing.gaussianFit):
 
 def wave(timePercent, iterations=1, ease=easing.gaussianFit):
     leds = [0] * col * row
+    timePercent = timePercent % 1
     for i in range(len(leds)):
         eval = timePercent * (iterations + 1) - 1 + XY(i)[0] / row
         if(eval > iterations or eval < 0):
@@ -136,6 +154,7 @@ def wave(timePercent, iterations=1, ease=easing.gaussianFit):
 
 def squareInwardsSharp(timePercent, ease=easing.linear):
     leds = [0] * col * row
+    timePercent = timePercent % 1
     eval = (timePercent * row) / 2
     for i in range(len(leds)):
         distFromCenter = max(abs((col - 1) / 2 - XY(i)[1]),
@@ -146,6 +165,7 @@ def squareInwardsSharp(timePercent, ease=easing.linear):
 
 def squareInwards(timePercent, ease=easing.spikeInCubic):
     leds = [0] * col * row
+    timePercent = timePercent % 1
     for i in range(len(leds)):
         distFromCenter = max(abs((col - 1) / 2 - XY(i)[1]),
                              abs((row - 1) / 2 - XY(i)[0]))
@@ -155,14 +175,58 @@ def squareInwards(timePercent, ease=easing.spikeInCubic):
 
 def curtain(timePercent, ease=easing.spikeInCubic):
     leds = [0] * col * row
+    timePercent = timePercent % 1
     for i in range(len(leds)):
         distFromCenter = abs((row - 1) / 2 - XY(i)[0])
         leds[i] = ease(clamp(timePercent * 1.2 - distFromCenter / row))
     return leds
 
 
+def fill(timePercent, ease=easing.triangle, width=16, height=16):
+    leds = [0] * col * row
+    timePercent = timePercent % 1
+    for x in range(width):
+        for y in range(height):
+            leds[fromXY(x, y)] = ease(timePercent)
+    return leds
+
+
+def cross(timePercent, ease=easing.linearCutoff):
+    leds = [0] * col * row
+    timePercent = timePercent % 1
+    for y in range(col // 2):
+        for x in range(3 * row // 8, 5 * row // 8):
+            leds[fromXY(x, y)] = ease(1 - clamp(timePercent * 2 - 1 + y / col))
+    leds = add(leds, rotateMatrix90(leds, 1))
+
+    for y in range(3 * col // 8, 5 * col // 8):
+        for x in range(3 * row // 8, 5 * row // 8):
+            leds[fromXY(x, y)] = leds[fromXY(x, y)] * 0.5
+
+    return mirrorX(mirrorY(leds))
+
+
+def splitLines(timePercent):
+    leds = [0] * col * row
+    timePercent = timePercent % 1
+    if timePercent < 0.5:
+        def ease(t): return 1 if t <= 1 / 16 and t > 0 else 0
+        for y in range(col // 2):
+            for x in range(row):
+                leds[fromXY(x, y)] = ease(timePercent - y / col)
+        mirrorY(leds)
+        return leds
+    else:
+        def ease(t): return 1 if t <= 1 / 8 and t > 0 else 0
+        for y in range(col):
+            for x in range(row):
+                leds[fromXY(x, y)] = ease(timePercent - y / col + 1 / 16)
+        return flipLeftHalf(leds)
+
+
 def circleInwards(timePercent, ease=easing.spikeInCubic):
     leds = [0] * col * row
+    timePercent = timePercent % 1
     eval = timePercent * 1.4143  # hardcoded root(2)
     for i in range(len(leds)):
         dy = (col - 1) / 2 - XY(i)[1]
@@ -174,6 +238,7 @@ def circleInwards(timePercent, ease=easing.spikeInCubic):
 
 def circleInwardsSharp(timePercent, ease=easing.linear):
     leds = [0] * col * row
+    timePercent = timePercent % 1
     eval = (timePercent * row * 1.4143) / 2  # hardcoded root(2)
     for i in range(len(leds)):
         dy = (col - 1) / 2 - XY(i)[1]
@@ -184,13 +249,14 @@ def circleInwardsSharp(timePercent, ease=easing.linear):
 
 
 def strobe(timePercent, ease=easing.triangle):
+    timePercent = timePercent % 1
     return [clamp(ease(timePercent * 2))] * row * col
 
 
 def zipper(timePercent, simultaneus=4):
     """the second parameter determines how many rows are moving at the same time"""
     leds = [0] * col * row
-
+    timePercent = timePercent % 1
     for y in range(col):
         eval = timePercent * (col / simultaneus + 1) - y / simultaneus
         for x in range(row // 2):
@@ -206,15 +272,25 @@ def zipper(timePercent, simultaneus=4):
     return leds
 
 
-gifPaths = ["animation8times4", "compress", "cross", "buildingCross8"]
-listOfGifs = []
-for gifPath in gifPaths:
-    gifFile = Image.open("effectGifs/" + gifPath + ".gif")
-    listOfGifs.append([])
-    for frame in ImageSequence.Iterator(gifFile):
-        listOfGifs[len(listOfGifs) - 1].append(frame.convert('RGB').getdata())
+def loadGifs():
+    gifPaths = ["compress", "cross", "buildingCross8",
+                "dithered45degSquare", "buildArrows"]
+    global listOfGifs
+    listOfGifs = {}
+    for gifPath in gifPaths:
+        gifFile = Image.open("effectGifs/" + gifPath + ".gif")
+        listOfGifs[gifPath] = []
+        for frame in ImageSequence.Iterator(gifFile):
+            # normalize the colors from 8bit int to floats in the range 0-1
+            normalizedFrame = [(i[0] / 255, i[1] / 255, i[2] / 255,)
+                               for i in list(frame.convert('RGB').getdata())]
+            listOfGifs[gifPath].append(normalizedFrame)
+    print("following GIFs have been loaded:", gifPaths)
 
 
-def gif(timePercent, gifIndex=0, colorMask=0):
-    pos = math.floor(timePercent * len(listOfGifs[gifIndex]))
-    return [i[colorMask] / 255 for i in list(listOfGifs[gifIndex][pos])]
+loadGifs()
+
+
+def gif(timePercent, gifName="compress", colorMask=0):
+    pos = math.floor((timePercent % 1) * len(listOfGifs[gifName]))
+    return [i[colorMask] for i in list(listOfGifs[gifName][pos])]
