@@ -184,10 +184,6 @@ def circleInwardsSharp(timePercent, ease=easing.linear):
 
 
 def strobe(timePercent, ease=easing.triangle):
-    # leds = [0] * col * row
-    # for led in leds:
-    #     led = clamp(ease(timePercent * 2))
-    # return leds
     return [clamp(ease(timePercent * 2))] * row * col
 
 
@@ -210,22 +206,15 @@ def zipper(timePercent, simultaneus=4):
     return leds
 
 
-crossGif = Image.open("effectGifs/cross.gif")
-crossGifList = []
-for frame in ImageSequence.Iterator(crossGif):
-    crossGifList.append(frame.convert('RGB'))
-
-compressGif = Image.open("effectGifs/compress.gif")
-compressGifList = []
-for frame in ImageSequence.Iterator(compressGif):
-    compressGifList.append(frame.convert('RGB'))
-
-animGif = Image.open("effectGifs/animation8times4.gif")
-animGifList = []
-for frame in ImageSequence.Iterator(animGif):
-    animGifList.append(frame.convert('RGB'))
+gifPaths = ["animation8times4", "compress", "cross", "buildingCross8"]
+listOfGifs = []
+for gifPath in gifPaths:
+    gifFile = Image.open("effectGifs/" + gifPath + ".gif")
+    listOfGifs.append([])
+    for frame in ImageSequence.Iterator(gifFile):
+        listOfGifs[len(listOfGifs) - 1].append(frame.convert('RGB').getdata())
 
 
-def gif(timePercent, gifList=animGifList, colorMask=0):
-    pos = math.floor(timePercent * len(gifList))
-    return [i[colorMask] / 255 for i in list(gifList[pos].getdata())]
+def gif(timePercent, gifIndex=0, colorMask=0):
+    pos = math.floor(timePercent * len(listOfGifs[gifIndex]))
+    return [i[colorMask] / 255 for i in list(listOfGifs[gifIndex][pos])]
