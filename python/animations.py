@@ -273,8 +273,8 @@ def zipper(timePercent, simultaneus=4):
 
 
 def loadGifs():
-    gifPaths = ["compress", "cross", "buildingCross8",
-                "dithered45degSquare", "buildArrows"]
+    gifPaths = ["compress", "cross", "buildingCross8", "dithered45degSquare",
+                "buildArrows", "compressingLines", "rotatingLines", "stonehengeToBorder"]
     global listOfGifs
     listOfGifs = {}
     for gifPath in gifPaths:

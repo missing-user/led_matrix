@@ -114,8 +114,11 @@ def loop():
             g = b = r = animChain.chain3(beatTimePercentage % 16)
         elif beatTimePercentage < 71:
             g = b = r = animChain.chain4(beatTimePercentage % 16)
+        elif beatTimePercentage < 78:
+            g = b = r = animChain.chain5(beatTimePercentage % 16)
         else:
-            g = b = r = animChain.chain2(beatTimePercentage % 2)
+            g = b = r = animChain.chain2(
+                beatTimePercentage % animChain.chain2.length)
 
         time1 = time.time()
         times[1].append(time1 - time0)
