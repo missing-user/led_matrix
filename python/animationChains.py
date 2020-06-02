@@ -3,7 +3,17 @@ import easing
 from animations import *
 
 
-def chain1(time):  # length = 12
+def length(l):  # decorator factory
+    """decorator that returns the length of an animation chain in beats"""
+    def decorator(func):  # decorator
+        func.length = l
+        return func
+
+    return decorator
+
+
+@length(12)
+def chain1(time):
     if time < 4:
         return gif(time / 4, "dithered45degSquare")
     elif time < 6:
@@ -19,11 +29,13 @@ def chain1(time):  # length = 12
     return diagonalWave(time, 1, easing.square)
 
 
-def chain2(time):  # length = 2
+@length(2)
+def chain2(time):
     return splitLines(easing.triangle(time / 2))
 
 
-def chain3(time):  # length = 16
+@length(16)
+def chain3(time):
     if time < 3:
         return diagonalWave(time)
     elif time < 4:
@@ -37,7 +49,8 @@ def chain3(time):  # length = 16
     return mirrorX(mirrorY(diagonalWave(-time)))
 
 
-def chain4(time):  # length = 16
+@length(16)
+def chain4(time):
     if time < 4:
         return cross(time, easing.square)
     elif time < 12:
@@ -49,3 +62,15 @@ def chain4(time):  # length = 16
     elif time < 14:
         return flipBottomHalf(wave(time))
     return strobe(time * 3)
+
+
+@length(9)
+def chain5(time):
+    if time < 1:
+        return gif(time, "compressingLines")
+    elif time < 7:
+        return gif((time - 1) / 6, "rotatingLines")
+    elif time < 9:
+        return gif(time / 2 + 0.5, "stonehengeToBorder")
+
+    return gif(0.4, "compressingLines")
