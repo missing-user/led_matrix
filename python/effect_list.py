@@ -15,6 +15,13 @@ class Effect_List:
         return [e for e in self.list if e.start_time <= time < e.start_time + e.length]
         # return list(filter(lambda elem: elem.start_time <= time <= elem.start_time + elem.length, self.list))
 
+    def __repr__(self):
+        elements = [(f.__name__, f.start_time) for f in self.list]
+        return f"Effect_List({elements})"
+
+    def __getitem__(self, time):
+        return self.get_active(time)
+
     def __call__(self, time):
         return [func(time - func.start_time) for func in self.get_active(time)]
 
@@ -42,10 +49,11 @@ if __name__ == "__main__":
     effects = Effect_List()
     effects.add(timed(x, 1), timed(y, 2))
 
+    print(effects)
     print(effects.list)
 
     for t in range(12):
-        print(f"t={t}", effects.get_active(t))
+        print(f"t={t}", effects[t])
 
     for t in range(12):
         print(f"t={t}", effects(t))
