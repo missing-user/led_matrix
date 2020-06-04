@@ -75,8 +75,8 @@ def loop():
         elif beatTimePercentage < 26:
             r = g = b = anim.diagonalWave(beatTimePercentage)
         elif beatTimePercentage < 30:
-            r = anim.circleInwards(beatTimePercentage / 2)
-            g = b = anim.circleInwards((beatTimePercentage))
+            r = anim.circle_inwards(beatTimePercentage / 2)
+            g = b = anim.circle_inwards((beatTimePercentage))
         elif beatTimePercentage < 38:
             g = b = anim.gif(beatTimePercentage / 8, "buildingCross8", 1)
             r = anim.gif(beatTimePercentage / 8, "buildingCross8", 0)
@@ -91,7 +91,8 @@ def loop():
             currEffect = random.choice(animChain.reg.all)
             effectOffset += beatTimePercentage
             print('now starting:', currEffect.__name__)
-        r = g = b = currEffect(beatTimePercentage % currEffect.length)
+        r = g = b = anim.overlay_border(currEffect(
+            beatTimePercentage % currEffect.length), anim.diagonalWave(beatTimePercentage))
 
         display.drawPixels(to8bitRgb(merge(r, g, b)))
         display.update()  # 11ms
