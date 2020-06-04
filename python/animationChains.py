@@ -73,7 +73,7 @@ def chain4(time):
         return cross(time, easing.square)
     elif time < 12:
         filledCorners = mirrorX(
-            mirrorY(fill(clamp((time % 1) * 2), width=6, height=6)))
+            mirrorY(fill(clamp((time % 1) * 2 - 1), width=6, height=6)))
         return add(cross(time), filledCorners)
     elif time < 13:
         return rotateMatrix90(flipBottomHalf(wave(time)), 1)
@@ -157,5 +157,5 @@ def chain10(time):
     elif time < 24:
         return gif(time, "compress")
     elif time < 28:
-        return zipper(easing.triangle(time / 2 % 1))
+        return circle_inwards_sharp(easing.triangle(time / 2 % 1))
     return circle_inwards(-time)

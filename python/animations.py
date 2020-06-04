@@ -117,6 +117,16 @@ def add(matrix1, matrix2):
     return[matrix1[i] + matrix2[i] for i in range(len(matrix1))]
 
 
+def add_clamped(matrices):
+    result = [0] * len(matrices[0])
+    for i in range(len(result)):
+        for matrix in matrices:
+            result[i] += matrix[i]
+        result[i] = clamp(result[i])
+    return result
+    return[matrix1[i] + matrix2[i] for i in range(len(matrix1))]
+
+
 def mirrorX(input_leds):
     for y in range(col):
         for x in range(row // 2):

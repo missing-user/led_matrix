@@ -26,12 +26,16 @@ class Effect_List:
         return [func(time - func.start_time) for func in self.get_active(time)]
 
 
-def timed(func, start_time):
+def timed(func, start_time, override_length=None):
     @functools.wraps(func)
     def wrapper(time):
         return func(time)
     wrapper.start_time = start_time
-    wrapper.length = func.length
+
+    # prefer override_length, take animation chain length if that exists, else 1
+    wrapper.length = override_length or func.length if hasattr(
+        func, "length") else 1
+
     return wrapper
 
 
