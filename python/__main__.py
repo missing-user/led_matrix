@@ -1,4 +1,5 @@
 import math
+import random
 import signal
 import time
 
@@ -47,40 +48,23 @@ def to8bitRgb(floatList):
 
 
 start_time = time.time()
-iterations = 0
 
-times = [[], [], [], []]
-
-
-# FOR DEBUG
-
-def on_exit(a, b):
-    print("exit")
-    averages = [np.mean(l) * 1000 for l in times]
-    print("avg times", averages)
-    print("avg fps", iterations / (time.time() - start_time))
-    exit()
-
-
-signal.signal(signal.SIGINT, on_exit)
+currEffect = animChain.chain1
+effectOffset = 0
 
 
 def loop():
     """The main loop."""
-
+    global effectOffset
+    global currEffect
     while True:
         totalTime = time.time() - start_time
-        time0 = time.time()
-        times[0].append(time0)
-        # draw pixels takes an array of RGB touples
-        # 1ms
 
         beatTimePercentage = (
             totalTime - spotifyHandler.currentSongTime) / spotifyHandler.beatTime
-        beatTimePercentage = beatTimePercentage % 120
-        if beatTimePercentage < 12:
-            g = b = r = animChain.chain1(beatTimePercentage % 12)
-        elif beatTimePercentage < 18:
+        beatTimePercentage -= effectOffset
+
+        if beatTimePercentage < 18:
             r = anim.arrow(beatTimePercentage)
             g = anim.rotateMatrix90(
                 anim.arrow(beatTimePercentage), 2)
@@ -102,41 +86,15 @@ def loop():
         elif beatTimePercentage < 50:
             g = r = anim.gif(beatTimePercentage, "compress")
             b = anim.strobe(beatTimePercentage)
-        elif beatTimePercentage < 55:
-            g = b = r = anim.strobe(beatTimePercentage * 3)
-        elif beatTimePercentage < 60:
-            g = b = r = anim.curtain(
-                anim.easing.triangle(beatTimePercentage / 2))
-        elif beatTimePercentage < 65:
-            g = b = r = anim.rotateMatrix90(anim.curtain(
-                anim.easing.triangle(beatTimePercentage / 2)), 1)
-        elif beatTimePercentage < 71:
-            g = b = r = animChain.chain3(beatTimePercentage % 16)
-        elif beatTimePercentage < 71:
-            g = b = r = animChain.chain4(beatTimePercentage % 16)
-        elif beatTimePercentage < 78:
-            g = b = r = animChain.chain5(beatTimePercentage % 16)
-        else:
-            g = b = r = animChain.chain2(
-                beatTimePercentage % animChain.chain2.length)
 
-        time1 = time.time()
-        times[1].append(time1 - time0)
+        if beatTimePercentage >= currEffect.length or beatTimePercentage < 0:
+            currEffect = random.choice(animChain.reg.all)
+            effectOffset += beatTimePercentage
+            print('now starting:', currEffect.__name__)
+        r = g = b = currEffect(beatTimePercentage % currEffect.length)
 
-        # 3ms
         display.drawPixels(to8bitRgb(merge(r, g, b)))
-
-        time2 = time.time()
-        times[2].append(time2 - time1)
-
-        # 11ms
-        display.update()
-        time3 = time.time()
-        times[3].append(time3 - time2)
-
-        global iterations
-        iterations += 1
-        # print("frame", iterations, "at", time.time() - start_time, "s")
+        display.update()  # 11ms
 
 
 loop()
