@@ -84,9 +84,12 @@ def loop():
         curr_effects = effects(get_time())
         if len(curr_effects) > 1:
             r = g = b = anim.overlay_border(
-                curr_effects[0], anim.add_clamped(curr_effects[1:]), 3)
+                curr_effects[0], [0] * row * col, len(curr_effects) - 1)
+            g = anim.overlay_border([0] * row * col, anim.add_clamped(
+                curr_effects[1:]), len(curr_effects) - 1)
         else:
-            r = g = b = curr_effects[0]
+            r = b = curr_effects[0]
+            g = [0] * row * col
 
         display.drawPixels(to8bitRgb(merge(r, g, b)))
         display.update()  # 11ms
