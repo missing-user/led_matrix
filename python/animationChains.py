@@ -1,4 +1,3 @@
-
 import easing
 from animations import *
 
@@ -148,7 +147,7 @@ def chain9(time):
 @length(30)
 def chain10(time):
     if time < 8:
-        return circleInwards(time)
+        return circle_inwards(time)
     elif time < 12:
         return rotateMatrix90(curtain(easing.triangle(time / 2)), 1)
     elif time < 16:
@@ -159,4 +158,4 @@ def chain10(time):
         return gif(time, "compress")
     elif time < 28:
         return zipper(easing.triangle(time / 2 % 1))
-    return circleInwards(-time)
+    return circle_inwards(-time)
