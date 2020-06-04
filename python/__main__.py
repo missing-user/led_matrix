@@ -26,7 +26,7 @@ if TESTING:
 
     # the canvas fits matrix and has a margin of [pixel_spacing] around the border
     master = Tk()
-    tileSize = 40
+    tileSize = 60
     w = Canvas(master, width=row * (tileSize + 5), height=col * (tileSize + 5))
     w.pack()
 
@@ -62,10 +62,17 @@ def build_song_effects():
     global start_time_seconds
     start_time_seconds = time.time() - sph.currentSongTime
     effects.add(timed(animChain.chain2, 0))
-    for test in range(400):
-        if not effects(test):
-            effects.add(timed(random.choice(animChain.reg.all), test))
-    print(effects)
+    for beat in range(600):
+        if not effects(beat):
+            effects.add(timed(random.choice(animChain.reg.all), beat))
+
+    for segment in sph.results['segments']:
+        seg_time = sph.time_to_beats(segment['start'])
+        # there are segments with 'none' as their start time
+        if seg_time:
+            effects.add(timed(anim.diagonalWave,
+                              seg_time, segment['duration']))
+    # print(effects)
 
 
 build_song_effects()
@@ -74,8 +81,12 @@ build_song_effects()
 def loop():
     """The main loop."""
     while True:
-        print(get_time())
-        r = g = b = effects(get_time())[0]
+        curr_effects = effects(get_time())
+        if len(curr_effects) > 1:
+            r = g = b = anim.overlay_border(
+                curr_effects[0], anim.add_clamped(curr_effects[1:]), 3)
+        else:
+            r = g = b = curr_effects[0]
 
         display.drawPixels(to8bitRgb(merge(r, g, b)))
         display.update()  # 11ms
