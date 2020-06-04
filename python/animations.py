@@ -40,7 +40,38 @@ def flipLeftHalf(leds):
     return leds
 
 
-def rotateMatrix90(input_leds, count):
+def maskCorner(leds, corner=0):
+    for y in range(col // 2):
+        for x in range(row // 2):
+            if not corner == 0:
+                leds[fromXY(x, y)] = 0
+
+    for y in range(col // 2):
+        for x in range(row // 2, row):
+            if not corner == 1:
+                leds[fromXY(x, y)] = 0
+
+    for y in range(col // 2, col):
+        for x in range(row // 2, row):
+            if not corner == 2:
+                leds[fromXY(x, y)] = 0
+
+    for y in range(col // 2, col):
+        for x in range(row // 2):
+            if not corner == 3:
+                leds[fromXY(x, y)] = 0
+    return leds
+
+
+def flipEverySecondRow(input_leds):
+    leds = input_leds.copy()
+    for y in range(0, col, 2):
+        for x in range(row):
+            leds[fromXY(row - 1 - x, y)] = input_leds[fromXY(x, y)]
+    return leds
+
+
+def rotateMatrix90(input_leds, count=1):
     """rotates the given matrix by count 90deg increments"""
     count = (count + 4) % 4
     rotated_leds = input_leds.copy()
@@ -273,8 +304,8 @@ def zipper(timePercent, simultaneus=4):
 
 
 def loadGifs():
-    gifPaths = ["compress", "cross", "buildingCross8", "dithered45degSquare",
-                "buildArrows", "compressingLines", "rotatingLines", "stonehengeToBorder"]
+    gifPaths = ["compress", "cross", "buildingCross8", "dithered45degSquare", "buildArrows", "compressingLines",
+                "rotatingLines", "stonehengeToBorder", "buildTiles", "dot", "symTriangle"]
     global listOfGifs
     listOfGifs = {}
     for gifPath in gifPaths:
