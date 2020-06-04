@@ -8,8 +8,7 @@ class Effect_List:
         self.list = list
 
     def add(self, *elems):
-        for e in elems:
-            self.list.append(e)
+        self.list.extend(elems)
 
     def get_active(self, time):
         return [e for e in self.list if e.start_time <= time < e.start_time + e.length]
