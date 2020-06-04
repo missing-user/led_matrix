@@ -1,4 +1,5 @@
 import functools
+
 from animationChains import length
 
 
@@ -11,7 +12,7 @@ class Effect_List:
             self.list.append(e)
 
     def get_active(self, time):
-        return [e for e in self.list if e.start_time <= time <= e.start_time + e.length]
+        return [e for e in self.list if e.start_time <= time < e.start_time + e.length]
         # return list(filter(lambda elem: elem.start_time <= time <= elem.start_time + elem.length, self.list))
 
     def __call__(self, time):
