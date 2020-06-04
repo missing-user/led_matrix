@@ -7,7 +7,8 @@ import numpy as np
 
 import animationChains as animChain
 import animations as anim
-import spotifyHandler
+import spotifyHandler as sph
+from effect_list import Effect_List, timed
 
 TESTING = True
 row = 16
@@ -47,52 +48,34 @@ def to8bitRgb(floatList):
     return [(math.floor(i[0] * 255), math.floor(i[1] * 255), math.floor(i[2] * 255)) for i in floatList]
 
 
-start_time = time.time()
+start_time_seconds = time.time()
+effects = Effect_List()
 
-currEffect = animChain.chain1
-effectOffset = 0
+
+def get_time():
+    """returns the current song time in 'beats units'"""
+    global start_time_seconds
+    return sph.time_to_beats(time.time() - start_time_seconds)
+
+
+def build_song_effects():
+    global start_time_seconds
+    start_time_seconds = time.time() - sph.currentSongTime
+    effects.add(timed(animChain.chain2, 0))
+    for test in range(400):
+        if not effects(test):
+            effects.add(timed(random.choice(animChain.reg.all), test))
+    print(effects)
+
+
+build_song_effects()
 
 
 def loop():
     """The main loop."""
-    global effectOffset
-    global currEffect
     while True:
-        totalTime = time.time() - start_time
-
-        beatTimePercentage = (
-            totalTime - spotifyHandler.currentSongTime) / spotifyHandler.beatTime
-        beatTimePercentage -= effectOffset
-
-        if beatTimePercentage < 18:
-            r = anim.arrow(beatTimePercentage)
-            g = anim.rotateMatrix90(
-                anim.arrow(beatTimePercentage), 2)
-            b = anim.rotateMatrix90(
-                anim.arrow(beatTimePercentage), 1)
-        elif beatTimePercentage < 22:
-            r = anim.zipper(beatTimePercentage)
-        elif beatTimePercentage < 26:
-            r = g = b = anim.diagonalWave(beatTimePercentage)
-        elif beatTimePercentage < 30:
-            r = anim.circle_inwards(beatTimePercentage / 2)
-            g = b = anim.circle_inwards((beatTimePercentage))
-        elif beatTimePercentage < 38:
-            g = b = anim.gif(beatTimePercentage / 8, "buildingCross8", 1)
-            r = anim.gif(beatTimePercentage / 8, "buildingCross8", 0)
-        elif beatTimePercentage < 46:
-            r = b = anim.gif(beatTimePercentage / 8, "cross")
-            g = anim.gif(beatTimePercentage / 8, "cross")
-        elif beatTimePercentage < 50:
-            g = r = anim.gif(beatTimePercentage, "compress")
-            b = anim.strobe(beatTimePercentage)
-
-        if beatTimePercentage >= currEffect.length or beatTimePercentage < 0:
-            currEffect = random.choice(animChain.reg.all)
-            effectOffset += beatTimePercentage
-            print('now starting:', currEffect.__name__)
-        r = g = b = anim.overlay_border(currEffect(
-            beatTimePercentage % currEffect.length), anim.diagonalWave(beatTimePercentage))
+        print(get_time())
+        r = g = b = effects(get_time())[0]
 
         display.drawPixels(to8bitRgb(merge(r, g, b)))
         display.update()  # 11ms
