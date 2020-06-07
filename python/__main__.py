@@ -61,6 +61,7 @@ def get_time():
 def build_song_effects():
     global start_time_seconds
     start_time_seconds = time.time() - sph.currentSongTime
+    random.seed(sph.currentTrack['item']['id'])
     effects.add(timed(animChain.chain2, 0))
     for beat in range(600):
         if not effects(beat):
@@ -90,6 +91,8 @@ def loop():
         else:
             r = b = curr_effects[0]
             g = [0] * row * col
+
+        r = g = b = effects(get_time())[0]
 
         display.drawPixels(to8bitRgb(merge(r, g, b)))
         display.update()  # 11ms

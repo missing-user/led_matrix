@@ -338,6 +338,7 @@ def load_gifs():
                 "rotatingLines", "stonehengeToBorder", "buildTiles", "dot", "symTriangle"]
     global listOfGifs
     listOfGifs = {}
+    print("loading GIFs")
     for gifPath in gifPaths:
         gifFile = Image.open("effectGifs/" + gifPath + ".gif")
         listOfGifs[gifPath] = []
@@ -346,7 +347,7 @@ def load_gifs():
             normalizedFrame = [(i[0] / 255, i[1] / 255, i[2] / 255,)
                                for i in list(frame.convert('RGB').getdata())]
             listOfGifs[gifPath].append(normalizedFrame)
-    print("following GIFs have been loaded:", gifPaths)
+    # print("following GIFs have been loaded:", gifPaths)
 
 
 load_gifs()
