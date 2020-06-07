@@ -159,3 +159,15 @@ def chain10(time):
     elif time < 28:
         return circle_inwards_sharp(easing.triangle(time / 2 % 1))
     return circle_inwards(-time)
+
+
+@reg
+@length(16)
+def chain11(time):
+    if time < 8:
+        return rotateMatrix90(arrow(time, 2), math.floor(time))
+    elif time < 12:
+        return squareInwardsSharp(time)
+    elif time < 16:
+        return rotateMatrix90(fill(time * 2, width=8, height=8), math.floor(time))
+    return strobe(time)

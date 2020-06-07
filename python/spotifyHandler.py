@@ -1,3 +1,5 @@
+import json
+
 import spotipy
 import spotipy.util as util
 from spotipy.oauth2 import SpotifyClientCredentials
@@ -15,18 +17,23 @@ def time_to_beats(time_seconds):
 
 if token:
     sp = spotipy.Spotify(auth=token)
-    results = sp.current_user_playing_track()
-    if not results:
+    currentTrack = sp.current_user_playing_track()
+    if not currentTrack:
         print('no currently playing song found, exiting')
         exit()
-    albumCover = results['item']['album']['images'].pop()
+    albumCover = currentTrack['item']['album']['images'].pop()
     print(albumCover)
-    currentSongTime = results['progress_ms'] / 1000
+    currentSongTime = currentTrack['progress_ms'] / 1000
     print('currentSong seconds', currentSongTime)
-    results = sp.audio_analysis(results['item']['id'])
+    results = sp.audio_analysis(currentTrack['item']['id'])
     print('BPM:', results['track']['tempo'])
     beatTime = 60 / results['track']['tempo']
-
+    print()
+    print(currentTrack['item']['name'], '    by   ',
+          currentTrack['item']['artists'][0]['name'])
+    print(json.dumps(sp.audio_features(
+        currentTrack['item']['id']), indent=2))
+    print()
     segments = results['segments']
     bars = results['bars']
     sections = results['sections']
