@@ -157,12 +157,12 @@ def chain10(time):
     elif time < 24:
         return gif(time, "compress")
     elif time < 28:
-        return circle_inwards_sharp(easing.triangle(time / 2 % 1))
+        return circle_inwards(easing.triangle(time / 2 % 1), easing.linear)
     return circle_inwards(-time)
 
 
 @reg
-@length(16)
+@length(28)
 def chain11(time):
     if time < 8:
         return rotateMatrix90(arrow(time, 2), math.floor(time))
@@ -170,4 +170,6 @@ def chain11(time):
         return squareInwardsSharp(time)
     elif time < 16:
         return rotateMatrix90(fill(time * 2, width=8, height=8), math.floor(time))
-    return strobe(time)
+    elif time < 20:
+        return gif(time, "fourGradientsLinearSpin")
+    return gif(time, "spiral16")

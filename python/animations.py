@@ -297,18 +297,6 @@ def circle_inwards(timePercent, ease=easing.spikeInCubic):
     return leds
 
 
-def circle_inwards_sharp(timePercent, ease=easing.linear):
-    leds = [0] * col * row
-    timePercent = timePercent % 1
-    eval = (timePercent * row * 1.4143) / 2  # hardcoded root(2)
-    for i in range(len(leds)):
-        dy = (col - 1) / 2 - xy(i)[1]
-        dx = (col - 1) / 2 - xy(i)[0]
-        distFromCenter = math.sqrt(dy * dy + dx * dx)
-        leds[i] = ease(clamp(eval - distFromCenter + 0.5))
-    return leds
-
-
 def strobe(timePercent, ease=easing.triangle):
     timePercent = timePercent % 1
     return [clamp(ease(timePercent * 2))] * row * col
@@ -335,7 +323,7 @@ def zipper(timePercent, simultaneus=4):
 
 def load_gifs():
     gifPaths = ["compress", "cross", "buildingCross8", "dithered45degSquare", "buildArrows", "compressingLines",
-                "rotatingLines", "stonehengeToBorder", "buildTiles", "dot", "symTriangle"]
+                "rotatingLines", "stonehengeToBorder", "buildTiles", "dot", "symTriangle", "fourGradientsLinearSpin", "spiral16"]
     global listOfGifs
     listOfGifs = {}
     print("loading GIFs")

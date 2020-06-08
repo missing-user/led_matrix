@@ -1,6 +1,6 @@
+import colorsys
 import math
 import random
-import signal
 import time
 
 import numpy as np
@@ -62,7 +62,14 @@ def build_song_effects():
     global start_time_seconds
     start_time_seconds = time.time() - sph.currentSongTime
     random.seed(sph.currentTrack['item']['id'])
-    effects.add(timed(animChain.chain2, 0))
+
+    # set preliminary random colors
+    global rnd1
+    global rnd2
+    rnd1 = random.random()
+    rnd2 = random.random()
+
+    effects.add(timed(animChain.chain11, 0))
     for beat in range(600):
         if not effects(beat):
             effects.add(timed(random.choice(animChain.reg.all), beat))
@@ -79,6 +86,11 @@ def build_song_effects():
 build_song_effects()
 
 
+def mapFromTo(x, a=0, b=1, c=0, d=1):
+    y = (x - a) / (b - a) * (d - c) + c
+    return y
+
+
 def loop():
     """The main loop."""
     while True:
@@ -92,9 +104,10 @@ def loop():
             r = b = curr_effects[0]
             g = [0] * row * col
 
-        r = g = b = effects(get_time())[0]
-
-        display.drawPixels(to8bitRgb(merge(r, g, b)))
+        m = effects(get_time())[0]
+        coloredImage = [(colorsys.hsv_to_rgb(mapFromTo(i, 0, 1, rnd1, rnd2), 1, anim.clamp(2 * i))
+                         if i != 0 else (0, 0, 0))for i in m]
+        display.drawPixels(to8bitRgb(coloredImage))
         display.update()  # 11ms
 
 
