@@ -26,12 +26,13 @@ if TESTING:
 
     # the canvas fits matrix and has a margin of [pixel_spacing] around the border
     master = Tk()
+    master.configure(background='black')
     tileSize = 60
-    w = Canvas(master, width=row * (tileSize + 5), height=col * (tileSize + 5))
+    w = Canvas(master, width=row * (tileSize + 0), height=col * (tileSize + 0))
     w.pack()
 
     # setup
-    display.generateDisplay(w, 5, tileSize, row, col)
+    display.generateDisplay(w, 0, tileSize, row, col)
     print("starting matrix in testing mode")
 else:
     # Production
@@ -50,6 +51,7 @@ def to8bitRgb(floatList):
 
 start_time_seconds = time.time()
 effects = Effect_List()
+color_list = []
 
 
 def get_time():
@@ -58,29 +60,43 @@ def get_time():
     return sph.time_to_beats(time.time() - start_time_seconds)
 
 
+def colors(time):
+    for i, sect in enumerate(sections_list):
+        if time > sect['beat']:
+            return (sect['hue1'], sect['hue2'])
+    return (sections_list[0]['hue1'], sections_list[0]['hue2'])
+
+
 def build_song_effects():
     global start_time_seconds
     start_time_seconds = time.time() - sph.currentSongTime
     random.seed(sph.currentTrack['item']['id'])
 
-    # set preliminary random colors
-    global rnd1
-    global rnd2
-    rnd1 = random.random()
-    rnd2 = random.random()
+    global sections_list
+    sections_list = []
+    for sect in sph.results['sections']:
+        sections_list.append({'beat': sph.time_to_beats(sect['start']),
+                              'hue1': random.random(),
+                              'hue2': random.random()})
+    sections_list.reverse()
 
-    effects.add(timed(animChain.chain11, 0))
-    for beat in range(600):
-        if not effects(beat):
-            effects.add(timed(random.choice(animChain.reg.all), beat))
+    effects.add(timed(animChain.chain1, 0))
+    for beatIndex in range(len(sph.results['beats'])):
+        if not effects(beatIndex):
+            effects.add(timed(random.choice(animChain.reg.all), beatIndex))
 
     for segment in sph.results['segments']:
         seg_time = sph.time_to_beats(segment['start'])
         # there are segments with 'none' as their start time
         if seg_time:
-            effects.add(timed(anim.diagonalWave,
-                              seg_time, segment['duration']))
+            if colors(seg_time)[1] > 0.5:
+                effects.add(timed(anim.diagonalWave,
+                                  seg_time, segment['duration']))
+            else:
+                effects.add(timed(anim.strobe, seg_time, segment['duration']))
+
     # print(effects)
+    print('colors', sections_list)
 
 
 build_song_effects()
@@ -95,17 +111,17 @@ def loop():
     """The main loop."""
     while True:
         curr_effects = effects(get_time())
-        if len(curr_effects) > 1:
-            r = g = b = anim.overlay_border(
-                curr_effects[0], [0] * row * col, len(curr_effects) - 1)
-            g = anim.overlay_border([0] * row * col, anim.add_clamped(
-                curr_effects[1:]), len(curr_effects) - 1)
-        else:
-            r = b = curr_effects[0]
-            g = [0] * row * col
 
-        m = effects(get_time())[0]
-        coloredImage = [(colorsys.hsv_to_rgb(mapFromTo(i, 0, 1, rnd1, rnd2), 1, anim.clamp(2 * i))
+        # set preliminary random colors
+        (hue1, hue2) = colors(get_time())
+
+        if hue1 > 0.5:
+            m = anim.overlay_border(
+                curr_effects[0], anim.add_clamped(curr_effects[1:]))
+        else:
+            m = curr_effects[0]
+
+        coloredImage = [(colorsys.hsv_to_rgb(mapFromTo(i, 0, 1, hue1, hue2), 1, anim.clamp(2 * i))
                          if i != 0 else (0, 0, 0))for i in m]
         display.drawPixels(to8bitRgb(coloredImage))
         display.update()  # 11ms

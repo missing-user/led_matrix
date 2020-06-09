@@ -45,6 +45,12 @@ def xy(index):
     return [index % row, index // row]
 
 
+def multiply(leds, mult):
+    if isinstance(mult, list):
+        return [leds[i] * mult[i] for i in range(len(leds))]
+    return [leds[i] * (mult % 1) for i in range(len(leds))]
+
+
 def flipBottomHalf(leds):
     for x in range(row):
         for y in range(col // 2):
@@ -118,7 +124,10 @@ def add(matrix1, matrix2):
 
 
 def add_clamped(matrices):
-    result = [0] * len(matrices[0])
+    if len(matrices) > 0:
+        result = [0] * len(matrices[0])
+    else:
+        result = [0] * row * col
     for i in range(len(result)):
         for matrix in matrices:
             result[i] += matrix[i]
