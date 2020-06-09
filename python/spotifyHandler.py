@@ -13,6 +13,7 @@ def time_to_beats(time_seconds):
     for i, beat in enumerate(results['beats']):
         if time_seconds > beat['start']:
             return i + (time_seconds - beat['start']) / beat['duration']
+    return 0
 
 
 if token:

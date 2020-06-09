@@ -24,5 +24,4 @@ def _from_rgb(rgb):
 
 
 def update():
-    global canvas
     canvas.update()

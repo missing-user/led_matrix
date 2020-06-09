@@ -32,7 +32,7 @@ def chain1(time):
     if time < 4:
         return gif(time / 4, "dithered45degSquare")
     elif time < 6:
-        return splitLines(time / 2)
+        return multiply(splitLines(time / 2), time / 2)
     elif time < 9:
         return gif(time / 3, "buildArrows")
     elif time < 10:
@@ -83,15 +83,16 @@ def chain4(time):
 
 
 @reg
-@length(6)
+@length(7)
 def chain5(time):
     if time < 1:
         return gif(time, "compressingLines")
     elif time < 4:
-        return gif((time - 0.5) / 3, "rotatingLines")
+        # the rotating lines gif is 6 beats long
+        return gif((time - 1) / 3, "rotatingLines")
     elif time < 5:
         return gif(time, "stonehengeToBorder")
-    return gif(0.4, "compressingLines")
+    return overlay_border([0] * row * col, squareInwards(-time, easing.linear), 2)
 
 
 @reg
@@ -144,7 +145,7 @@ def chain9(time):
 
 
 @reg
-@length(30)
+@length(32)
 def chain10(time):
     if time < 8:
         return circle_inwards(time)
@@ -152,10 +153,10 @@ def chain10(time):
         return rotateMatrix90(curtain(easing.triangle(time / 2)), 1)
     elif time < 16:
         return curtain(easing.triangle(time / 2))
-    elif time < 18:
-        return strobe(time * 3)
+    elif time < 20:
+        return strobe(time)
     elif time < 24:
-        return gif(time, "compress")
+        return multiply(gif(time, "compress"), time)
     elif time < 28:
         return circle_inwards(easing.triangle(time / 2 % 1), easing.linear)
     return circle_inwards(-time)
@@ -172,4 +173,4 @@ def chain11(time):
         return rotateMatrix90(fill(time * 2, width=8, height=8), math.floor(time))
     elif time < 20:
         return gif(time, "fourGradientsLinearSpin")
-    return gif(time, "spiral16")
+    return gif(easing.triangle(time / 2 % 1), "spiral16")
