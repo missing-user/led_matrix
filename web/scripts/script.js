@@ -128,4 +128,4 @@ function pixelate() {
 	ctx.drawImage(canvas, 0, 0, w, h, 0, 0, canvas.width, canvas.height);
 }
 // DEBUG: this is just for local testing
-setTimeout(displayAnalysis, 500, testdata);
+//setTimeout(displayAnalysis, 500, testdata);
