@@ -68,7 +68,7 @@ def chain3(time):
 
 @reg
 @length(16)
-def chain4(time):
+def crossRoutine(time):
     if time < 4:
         return cross(time, easing.square)
     elif time < 12:
@@ -174,3 +174,9 @@ def chain11(time):
     elif time < 20:
         return gif(time, "fourGradientsLinearSpin")
     return gif(easing.triangle(time / 2 % 1), "spiral16")
+
+
+@reg
+@length(24)
+def staticFlashes(time):
+    return multiply(gif(time / 4, "staticFrames", math.floor(time / 4 % 3)), time)

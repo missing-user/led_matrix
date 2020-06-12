@@ -10,14 +10,20 @@ import animations as anim
 import spotifyHandler as sph
 from effect_list import Effect_List, timed
 
-TESTING = True
-row = 16
-col = 16
+row = 18
+col = 18
 
 anim.row = row
 anim.col = col
 
-# import depending on production or testing
+anim.load_gifs()
+
+
+animChain.row = row
+animChain.col = col
+TESTING = True
+
+# imports depending on production or testing
 if TESTING:
     # Testing
     # setup Tkinter
@@ -33,7 +39,7 @@ if TESTING:
 
     # setup
     display.generateDisplay(w, 0, tileSize, row, col)
-    print("starting matrix in testing mode")
+    print("starting matrix in TESTING mode")
 else:
     # Production
     import Led_display
@@ -123,6 +129,7 @@ def loop():
 
         coloredImage = [(colorsys.hsv_to_rgb(mapFromTo(i, 0, 1, hue1, hue2), 1, anim.clamp(2 * i))
                          if i != 0 else (0, 0, 0))for i in m]
+
         display.drawPixels(to8bitRgb(coloredImage))
         display.update()  # 11ms
 
