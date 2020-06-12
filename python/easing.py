@@ -1,6 +1,7 @@
 
 def inverse(t):
-    1 - t
+    """falling linear function"""
+    return 1 - t
 
 
 def linear(t):

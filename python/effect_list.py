@@ -15,8 +15,18 @@ class Effect_List:
         # return list(filter(lambda elem: elem.start_time <= time <= elem.start_time + elem.length, self.list))
 
     def __repr__(self):
-        elements = [(f.__name__, f.start_time) for f in self.list]
-        return f"Effect_List({elements})"
+        if not self.list:
+            return "Effect_List is empty"
+        latest_effect = 600  # e.start_time + e.length
+        t = 0
+        elements = []
+        while self.get_active(t):
+            elements.append("\t ".join(f.__name__ for f in self.get_active(t)))
+            t += 1
+        return "\nEffect_List:\n" + "\n".join(elements)
+
+        #elements = [(f.__name__, f.start_time) for f in self.list]
+        # return f"Effect_List = {elements}"
 
     def __getitem__(self, time):
         return self.get_active(time)

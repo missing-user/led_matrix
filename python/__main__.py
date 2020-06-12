@@ -2,6 +2,7 @@ import colorsys
 import math
 import random
 import time
+from urllib.request import urlopen
 
 import numpy as np
 
@@ -33,7 +34,7 @@ if TESTING:
     # the canvas fits matrix and has a margin of [pixel_spacing] around the border
     master = Tk()
     master.configure(background='black')
-    tileSize = 60
+    tileSize = 800 // row
     w = Canvas(master, width=row * (tileSize + 0), height=col * (tileSize + 0))
     w.pack()
 
@@ -86,7 +87,7 @@ def build_song_effects():
                               'hue2': random.random()})
     sections_list.reverse()
 
-    effects.add(timed(animChain.chain1, 0))
+    effects.add(timed(random.choice(animChain.reg.all), 0))
     for beatIndex in range(len(sph.results['beats'])):
         if not effects(beatIndex):
             effects.add(timed(random.choice(animChain.reg.all), beatIndex))
@@ -101,36 +102,44 @@ def build_song_effects():
             else:
                 effects.add(timed(anim.strobe, seg_time, segment['duration']))
 
-    # print(effects)
-    print('colors', sections_list)
+    print(effects)
+
+    global cover_image
+    cover_image = anim.Image.open(urlopen(sph.album_cover['url']))
+    cover_image.thumbnail((row, col))
+    cover_image = cover_image.convert('RGB').getdata()
+    #print('colors', sections_list)
 
 
 build_song_effects()
 
 
 def mapFromTo(x, a=0, b=1, c=0, d=1):
-    y = (x - a) / (b - a) * (d - c) + c
-    return y
+    return (x - a) / (b - a) * (d - c) + c
 
 
 def loop():
     """The main loop."""
     while True:
-        curr_effects = effects(get_time())
-
-        # set preliminary random colors
-        (hue1, hue2) = colors(get_time())
-
-        if hue1 > 0.5:
-            m = anim.overlay_border(
-                curr_effects[0], anim.add_clamped(curr_effects[1:]))
+        if get_time() < 10:
+            # display the album cover for the first few seconds
+            display.drawPixels(cover_image)
         else:
-            m = curr_effects[0]
+            curr_effects = effects(get_time())
 
-        coloredImage = [(colorsys.hsv_to_rgb(mapFromTo(i, 0, 1, hue1, hue2), 1, anim.clamp(2 * i))
-                         if i != 0 else (0, 0, 0))for i in m]
+            # set preliminary random colors
+            (hue1, hue2) = colors(get_time())
 
-        display.drawPixels(to8bitRgb(coloredImage))
+            if hue1 > 0.5:
+                m = anim.overlay_border(
+                    curr_effects[0], anim.add_clamped(curr_effects[1:]))
+            else:
+                m = curr_effects[0]
+
+            coloredImage = [(colorsys.hsv_to_rgb(mapFromTo(i, 0, 1, hue1, hue2), 1, anim.clamp(2 * i))
+                             if i != 0 else (0, 0, 0))for i in m]
+
+            display.drawPixels(to8bitRgb(coloredImage))
         display.update()  # 11ms
 
 

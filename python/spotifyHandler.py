@@ -22,8 +22,7 @@ if token:
     if not currentTrack:
         print('no currently playing song found, exiting')
         exit()
-    albumCover = currentTrack['item']['album']['images'].pop()
-    print(albumCover)
+    album_cover = currentTrack['item']['album']['images'].pop()
     currentSongTime = currentTrack['progress_ms'] / 1000
     print('currentSong seconds', currentSongTime)
     results = sp.audio_analysis(currentTrack['item']['id'])
@@ -35,8 +34,5 @@ if token:
     print(json.dumps(sp.audio_features(
         currentTrack['item']['id']), indent=2))
     print()
-    segments = results['segments']
-    bars = results['bars']
-    sections = results['sections']
 else:
     print("Can't get token for", 'username')

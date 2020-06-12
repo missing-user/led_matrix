@@ -28,7 +28,7 @@ def length(l):  # decorator factory
 
 @reg
 @length(12)
-def chain1(time):
+def dithered_diamond(time):
     if time < 4:
         return gif(time / 4, "dithered45degSquare")
     elif time < 6:
@@ -45,14 +45,14 @@ def chain1(time):
 
 
 @reg
-@length(2)
-def chain2(time):
-    return splitLines(easing.triangle(time / 2))
+@length(4)
+def splitting_lines_repeat(time):
+    return splitLines(easing.triangle(time / 2 % 1))
 
 
 @reg
 @length(16)
-def chain3(time):
+def diamond_square_compress(time):
     if time < 3:
         return diagonalWave(time)
     elif time < 4:
@@ -68,7 +68,7 @@ def chain3(time):
 
 @reg
 @length(16)
-def crossRoutine(time):
+def cross_routine(time):
     if time < 4:
         return cross(time, easing.square)
     elif time < 12:
@@ -84,7 +84,7 @@ def crossRoutine(time):
 
 @reg
 @length(7)
-def chain5(time):
+def stonehenge_routine(time):
     if time < 1:
         return gif(time, "compressingLines")
     elif time < 4:
@@ -92,12 +92,12 @@ def chain5(time):
         return gif((time - 1) / 3, "rotatingLines")
     elif time < 5:
         return gif(time, "stonehengeToBorder")
-    return overlay_border([0] * row * col, squareInwards(-time, easing.linear), 2)
+    return overlay_border([0] * row * col, squareInwards(time, easing.inverse), 2)
 
 
 @reg
 @length(8)
-def chain6(time):
+def flipped_lines(time):
     if time < 4:
         return gif(time, "symTriangle")
     elif (time % 2) <= 1:
@@ -108,7 +108,7 @@ def chain6(time):
 
 @reg
 @length(8)
-def chain7(time):
+def arrow_up_down_curtain(time):
     if time < 1:
         return rotateMatrix90(arrow(-time))
     elif time < 4:
@@ -120,7 +120,7 @@ def chain7(time):
 
 @reg
 @length(6)
-def chain8(time):
+def build_wipe_corners(time):
     diamond = mirrorX(mirrorY(diagonalWave(time)))
     if time < 1:
         return gif(time, "buildTiles")
@@ -138,7 +138,7 @@ def chain8(time):
 
 @reg
 @length(6)
-def chain9(time):
+def dot_and_square(time):
     if time % 2 <= 1:
         return gif(time, "dot")
     return squareInwards(time)
@@ -164,19 +164,48 @@ def chain10(time):
 
 @reg
 @length(28)
-def chain11(time):
+def flashing_corners(time):
     if time < 8:
         return rotateMatrix90(arrow(time, 2), math.floor(time))
     elif time < 12:
         return squareInwardsSharp(time)
     elif time < 16:
-        return rotateMatrix90(fill(time * 2, width=8, height=8), math.floor(time))
+        return rotateMatrix90(fill(time * 2, width=row // 2, height=col // 2), math.floor(time))
     elif time < 20:
         return gif(time, "fourGradientsLinearSpin")
     return gif(easing.triangle(time / 2 % 1), "spiral16")
 
 
 @reg
-@length(24)
-def staticFlashes(time):
+@length(12)
+def flashing_symbols(time):
     return multiply(gif(time / 4, "staticFrames", math.floor(time / 4 % 3)), time)
+
+
+@reg
+@length(9)
+def dissolve_rebuild(time):
+    if time < 1:
+        dissolve_ordered(randomize=True)
+        dissolve(randomize=True)
+        return wave(time)
+    if time < 7:
+        return dissolve_ordered((time - 1) / 6)
+
+    if time < 8:
+        return dissolve(-time)
+    return rotateMatrix90(wave(time, 1, easing.inverse))
+
+
+@reg
+@length(18)
+def calming(time):
+    if time < 6:
+        return dissolve_random(time / 6)
+    if time < 9:
+        return circle_inwards(time / 3)
+    if time < 12:
+        return squareInwards(time / 3)
+    if time < 15:
+        return cross(time / 3)
+    return diagonalWave(time / 3)
