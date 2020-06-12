@@ -1,11 +1,8 @@
 import math
 
-from PIL import Image, ImageSequence
+from PIL import Image, ImageOps, ImageSequence
 
 import easing
-
-row = 16
-col = 16
 
 # helper functions
 
@@ -263,14 +260,18 @@ def fill(timePercent, ease=easing.triangle, width=16, height=16):
 def cross(timePercent, ease=easing.linearCutoff):
     leds = [0] * col * row
     timePercent = timePercent % 1
+
+    ratio_x = 3 * row // 8
+    ratio_y = 3 * col // 8
+
     for y in range(col // 2):
-        for x in range(3 * row // 8, 5 * row // 8):
+        for x in range(ratio_x, row - (ratio_x)):
             leds[from_xy(x, y)] = ease(
                 1 - clamp(timePercent * 2 - 1 + y / col))
     leds = add(leds, rotateMatrix90(leds, 1))
 
-    for y in range(3 * col // 8, 5 * col // 8):
-        for x in range(3 * row // 8, 5 * row // 8):
+    for y in range(ratio_y, col - (ratio_y)):
+        for x in range(ratio_x, row - (ratio_x)):
             leds[from_xy(x, y)] = leds[from_xy(x, y)] * 0.5
 
     return mirrorX(mirrorY(leds))
@@ -332,7 +333,7 @@ def zipper(timePercent, simultaneus=4):
 
 def load_gifs():
     gifPaths = ["compress", "cross", "buildingCross8", "dithered45degSquare", "buildArrows", "compressingLines",
-                "rotatingLines", "stonehengeToBorder", "buildTiles", "dot", "symTriangle", "fourGradientsLinearSpin", "spiral16"]
+                "rotatingLines", "stonehengeToBorder", "buildTiles", "dot", "symTriangle", "fourGradientsLinearSpin", "spiral16", "staticFrames"]
     global listOfGifs
     listOfGifs = {}
     print("loading GIFs")
@@ -340,14 +341,18 @@ def load_gifs():
         gifFile = Image.open("effectGifs/" + gifPath + ".gif")
         listOfGifs[gifPath] = []
         for frame in ImageSequence.Iterator(gifFile):
+            rgb_frame = frame.convert('RGB')
+            # in case of mismatch between gif and matrix resolution, add border
+            border_width = row - 1 - rgb_frame.size[0]
+            border_height = col - 1 - rgb_frame.size[1]
+            border = (border_height + border_width) // 2
+            rgb_frame = ImageOps.expand(rgb_frame, border=border, fill='black')
+
             # normalize the colors from 8bit int to floats in the range 0-1
             normalizedFrame = [(i[0] / 255, i[1] / 255, i[2] / 255,)
-                               for i in list(frame.convert('RGB').getdata())]
+                               for i in list(rgb_frame.getdata())]
             listOfGifs[gifPath].append(normalizedFrame)
     # print("following GIFs have been loaded:", gifPaths)
-
-
-load_gifs()
 
 
 def gif(timePercent, gifName="compress", colorMask=0):
