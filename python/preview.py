@@ -1,4 +1,10 @@
+from PIL import Image
+
+
 def generateDisplay(window, spacing, size, width, height):
+
+    global m_height
+    global m_width
     m_width = height
     m_height = width
 
@@ -13,9 +19,23 @@ def generateDisplay(window, spacing, size, width, height):
                 y, x, y + pixel_size, x + pixel_size, fill="#FFF")
 
 
+frames = []
+save_to_gif = False
+
+
 def drawPixels(pixelData):
     for i in range(len(pixelData)):
         canvas.itemconfig(i + 1, fill=_from_rgb(pixelData[i]))
+
+    if save_to_gif:
+        new_frame = Image.new('RGB', (m_width, m_height))
+        new_frame.putdata(pixelData)
+        frames.append(new_frame.quantize())
+        if len(frames) % 600 == 0:
+            # Save into a GIF file that loops forever
+            frames[0].save('anim.gif', format='GIF',
+                           append_images=frames[1:], save_all=True, duration=6, loop=0)
+            # frames.clear()
 
 
 def _from_rgb(rgb):
