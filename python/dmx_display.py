@@ -12,6 +12,9 @@ def generateDisplay(row, col, destination):
         sender.activate_output(universe)
         sender[universe].destination = destination
 
+    print('dmx control initialized at IP', destination,
+          ' with ', universe_count, 'universes')
+
 
 def drawPixels(pixelData):
     # reduce the touple list to a simple list
