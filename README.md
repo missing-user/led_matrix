@@ -1,2 +1,3 @@
 # led_matrix
-go to [missing-user.github.io/led_matrix](https://missing-user.github.io/led_matrix/) and login to spotify to see a music visualization of the currently playing song, as it would be displayed on our LED matrix
+go to [missing-user.github.io/led_matrix](https://missing-user.github.io/led_matrix/) and login to spotify to see a music visualization of the currently playing song, as it would be displayed on our LED matrix...
+here's a preview of the python program ![preview](https://github.com/missing-user/led_matrix/blob/master/python/effectGifs/highResData/upscaledPreview.gif "python preview")

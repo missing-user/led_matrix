@@ -11,20 +11,21 @@ import animations as anim
 import spotifyHandler as sph
 from effect_list import Effect_List, timed
 
-row = 18
-col = 18
+row = 16
+col = 16
 
 anim.row = row
 anim.col = col
 
 anim.load_gifs()
 
-
 animChain.row = row
 animChain.col = col
-TESTING = True
 
-# imports depending on production or testing
+TESTING = True
+DMX_OUTPUT = True
+
+# imports depending on display mode
 if TESTING:
     # Testing
     # setup Tkinter
@@ -41,10 +42,11 @@ if TESTING:
     # setup
     display.generateDisplay(w, 0, tileSize, row, col)
     print("starting matrix in TESTING mode")
+elif DMX_OUTPUT:
+    import dmx_display as display
 else:
     # Production
-    import Led_display
-    display = Led_display(row, col)
+    import Led_display as display
 
 
 def merge(l1, l2, l3):
