@@ -1,7 +1,7 @@
 import colorsys
 import math
 import random
-import time
+from time import time
 from urllib.request import urlopen
 
 import numpy as np
@@ -59,7 +59,7 @@ def to8bitRgb(floatList):
     return [(math.floor(i[0] * 255), math.floor(i[1] * 255), math.floor(i[2] * 255)) for i in floatList]
 
 
-start_time_seconds = time.time()
+start_time_seconds = time()
 effects = Effect_List()
 color_list = []
 
@@ -67,7 +67,7 @@ color_list = []
 def get_time():
     """returns the current song time in 'beats units'"""
     global start_time_seconds
-    return sph.time_to_beats(time.time() - start_time_seconds)
+    return sph.time_to_beats(time() - start_time_seconds)
 
 
 def colors(time):
@@ -79,7 +79,7 @@ def colors(time):
 
 def build_song_effects():
     global start_time_seconds
-    start_time_seconds = time.time() - sph.currentSongTime
+    start_time_seconds = time() - sph.currentSongTime
     random.seed(sph.currentTrack['item']['id'])
 
     global sections_list
@@ -124,7 +124,8 @@ def mapFromTo(x, a=0, b=1, c=0, d=1):
 def loop():
     """The main loop."""
     while True:
-        if get_time() < 10:
+
+        if time() - start_time_seconds < 10:
             # display the album cover for the first few seconds
             display.drawPixels(cover_image)
         else:
@@ -133,7 +134,7 @@ def loop():
             # set preliminary random colors
             (hue1, hue2) = colors(get_time())
 
-            if hue1 > 0.5:
+            if hue1 > 0.5 and len(curr_effects) > 1:
                 m = anim.overlay_border(
                     curr_effects[0], anim.add_clamped(curr_effects[1:]))
             else:

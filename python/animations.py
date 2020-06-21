@@ -117,8 +117,15 @@ def rotateMatrix90(input_leds, count=1):
     return rotated_leds
 
 
-def add(matrix1, matrix2):
-    return[matrix1[i] + matrix2[i] for i in range(len(matrix1))]
+def add(matrices):
+    if len(matrices) > 0:
+        result = [0] * len(matrices[0])
+    else:
+        result = [0] * row * col
+    for i in range(len(result)):
+        for matrix in matrices:
+            result[i] += matrix[i]
+    return result
 
 
 def add_clamped(matrices):
@@ -131,7 +138,6 @@ def add_clamped(matrices):
             result[i] += matrix[i]
         result[i] = clamp(result[i])
     return result
-    return[matrix1[i] + matrix2[i] for i in range(len(matrix1))]
 
 
 def mirrorX(input_leds):
@@ -269,7 +275,7 @@ def cross(time_percent, ease=easing.linearCutoff):
         for x in range(ratio_x, row - (ratio_x)):
             leds[from_xy(x, y)] = ease(
                 1 - clamp(time_percent * 2 - 1 + y / col))
-    leds = add(leds, rotateMatrix90(leds, 1))
+    leds = add([leds, rotateMatrix90(leds, 1)])
 
     for y in range(ratio_y, col - (ratio_y)):
         for x in range(ratio_x, row - (ratio_x)):
