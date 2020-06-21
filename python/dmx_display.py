@@ -1,7 +1,10 @@
+from time import sleep
+
 import sacn
 
 sender = sacn.sACNsender()
 sender.start()
+sender.manual_flush = True
 
 
 def generateDisplay(row, col, destination):
@@ -11,6 +14,7 @@ def generateDisplay(row, col, destination):
     for universe in range(1, universe_count + 1):  # start at Universe 1
         sender.activate_output(universe)
         sender[universe].destination = destination
+        sender[universe].fps = 2
 
     print('dmx control initialized at IP', destination,
           ' with ', universe_count, 'universes')
@@ -19,12 +23,15 @@ def generateDisplay(row, col, destination):
 def drawPixels(pixelData):
     # reduce the touple list to a simple list
     pixelData = list(sum(pixelData, ()))
+    sender.manual_flush = True
     for universe in range(1, universe_count + 1):
         data_segment = pixelData[(universe * 510 - 510):510 * universe]
         sender[universe].dmx_data = tuple(data_segment)
 
 
 def update():
-    pass
+    sleep(0.01)  # let the sender initalize itself
+    sender.flush()
+    sender.manual_flush = False
 
 # sender.stop()

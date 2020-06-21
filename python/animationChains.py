@@ -73,8 +73,8 @@ def cross_routine(time):
         return cross(time, easing.square)
     elif time < 12:
         filledCorners = mirrorX(
-            mirrorY(fill(clamp((time % 1) * 2 - 1), width=6, height=6)))
-        return add(cross(time), filledCorners)
+            mirrorY(fill(clamp((time % 1) * 2 - 1), width=4, height=4)))
+        return add_clamped([cross(time), filledCorners])
     elif time < 13:
         return rotateMatrix90(flipBottomHalf(wave(time)), 1)
     elif time < 14:
