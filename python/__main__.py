@@ -22,7 +22,7 @@ anim.load_gifs()
 animChain.row = row
 animChain.col = col
 
-TESTING = True
+TESTING = False
 DMX_OUTPUT = True
 
 # imports depending on display mode
@@ -40,10 +40,11 @@ if TESTING:
     w.pack()
 
     # setup
-    display.generateDisplay(w, 0, tileSize, row, col)
+    display.generateDisplay(row, col, w, 0, tileSize)
     print("starting matrix in TESTING mode")
 elif DMX_OUTPUT:
     import dmx_display as display
+    display.generateDisplay(row, col, "192.168.178.26")
 else:
     # Production
     import Led_display as display
