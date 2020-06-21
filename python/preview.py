@@ -1,7 +1,7 @@
 from PIL import Image
 
 
-def generateDisplay(window, spacing, size, width, height):
+def generateDisplay(width, height, window, spacing, size):
 
     global m_height
     global m_width
