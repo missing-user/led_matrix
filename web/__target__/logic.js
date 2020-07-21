@@ -1,4 +1,4 @@
-// Transcrypt'ed from Python, 2020-07-21 08:24:30
+// Transcrypt'ed from Python, 2020-07-21 08:34:44
 var effect_list = {};
 var random = {};
 var sph = {};
@@ -91,8 +91,12 @@ export var build_song_effects = function () {
 };
 export var haveBeenLoaded = function (arg) {
 	if (results != null) {
+		print ('results found, loading');
 		clearInterval (hack);
 		build_song_effects ();
+	}
+	else {
+		print ('no results', results);
 	}
 };
 export var hack = setInterval (haveBeenLoaded, 5);
