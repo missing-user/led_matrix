@@ -1,4 +1,4 @@
-// Transcrypt'ed from Python, 2020-07-21 08:34:44
+// Transcrypt'ed from Python, 2020-07-21 08:44:14
 var effect_list = {};
 var random = {};
 var sph = {};
@@ -33,7 +33,7 @@ export var effects = effect_list.Effect_List ();
 export var effects_seg = effect_list.Effect_List ();
 export var color_list = [];
 export var get_time = function () {
-	if (time.time () - start_time_seconds > sph.total_song_time) {
+	if (time.time () - start_time_seconds > total_song_time) {
 		print ('getting new song');
 		sph.get_track ();
 		build_song_effects ();
@@ -52,9 +52,9 @@ export var sections_list = [];
 export var build_song_effects = function () {
 	effects.py_clear ();
 	effects_seg.py_clear ();
-	start_time_seconds = time.time () - sph.current_song_time;
-	random.seed (sph.currentTrack ['item'] ['id']);
-	for (var sect of sph.results ['sections']) {
+	start_time_seconds = time.time () - current_song_time;
+	random.seed (currentTrack ['item'] ['id']);
+	for (var sect of results ['sections']) {
 		var h1 = random.random ();
 		var h2 = random.random ();
 		if (abs (h1 - h2) < 0.15) {
@@ -64,13 +64,13 @@ export var build_song_effects = function () {
 	}
 	sections_list.reverse ();
 	effects.add (effect_list.timed (random.choice (animChain.reg.all) (), 0));
-	for (var beatIndex = 0; beatIndex < len (sph.results ['beats']); beatIndex++) {
+	for (var beatIndex = 0; beatIndex < len (results ['beats']); beatIndex++) {
 		if (!(effects.get_current (beatIndex).length > 1)) {
 			var anim_choice = random.choice (animChain.reg.all);
 			effects.add (effect_list.timed (anim_choice (), beatIndex));
 		}
 	}
-	for (var segment of sph.results ['segments']) {
+	for (var segment of results ['segments']) {
 		var seg_time = sph.time_to_beats (segment ['start']);
 		var seg_duration = sph.time_to_beats (4 * segment ['duration'] + segment ['start']) - seg_time;
 		if (seg_time) {

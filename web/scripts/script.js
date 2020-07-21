@@ -20,6 +20,7 @@ function getCurrSongInfo() {
 				document.getElementById("track_name").textContent = data.item.name;
 				if (data) {
 					currentTrack = data;
+					total_song_time = data.item.duration_ms / 1000;
 					current_song_time = data.progress_ms / 1000;
 					console.log(data, "at time", current_song_time);
 					return data.item.id;

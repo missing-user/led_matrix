@@ -1,4 +1,4 @@
-// Transcrypt'ed from Python, 2020-07-21 08:34:52
+// Transcrypt'ed from Python, 2020-07-21 08:44:22
 var easing = {};
 var effect_list = {};
 var random = {};

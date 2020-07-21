@@ -1,6 +1,3 @@
-
-total_song_time = 120
-
 def time_to_beats(time_seconds):
     for i, beat in enumerate(results['beats']):
         # if the current timestamp is within a beat in the list
@@ -11,4 +8,5 @@ def time_to_beats(time_seconds):
     return 0
 
 def get_track():
+    print('song done, getting new track')
     pass
