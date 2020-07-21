@@ -4,26 +4,27 @@ const LOCALSTORAGE_ACCESS_TOKEN_EXPIRY_KEY =
 const accessToken = localStorage.getItem(LOCALSTORAGE_ACCESS_TOKEN_KEY);
 var spotifyApi = new SpotifyWebApi();
 var currentSongMs = 0;
-var timeouts = [];
 var songAnaysis;
 spotifyApi.setAccessToken(localStorage.getItem(LOCALSTORAGE_ACCESS_TOKEN_KEY));
-//gets the current playing song, shows title and pixelated image
+//gets the current playing song, saves analysis
+
+var currentTrack;
+var results;
+
 function getCurrSongInfo() {
-	for (var t of timeouts) clearTimeout(t);
-	timeouts = [];
 	spotifyApi
 		.getMyCurrentPlayingTrack()
 		.then(
 			function(data) {
 				console.log("current song", data);
+				document.getElementById("track_name").textContent = data.item.name;
 				if (data) {
-					document.getElementById("track_name").textContent = data.item.name;
-					//get the last (lowest resolution) image from the album images list
-					var image = data.item.album.images.pop();
-					pixelateAndDisplay(image.url);
-					currentSongMs = data.progress_ms;
+					currentTrack = data;
+					current_song_time = data.progress_ms / 1000;
+					console.log(data, "at time", current_song_time);
 					return data.item.id;
 				}
+
 				return null;
 			},
 			function(err) {
@@ -32,100 +33,9 @@ function getCurrSongInfo() {
 		)
 		.then(getSongAnalysis);
 }
-
 function getSongAnalysis(songId) {
-	spotifyApi.getAudioAnalysisForTrack(songId).then(
-		//do something with json
-		displayAnalysis
-	);
+	spotifyApi.getAudioAnalysisForTrack(songId).then(r => (results = r));
 }
 var effect = 0;
 
-function displayAnalysis(data) {
-	songAnaysis = data;
-	for (var sct of data.sections) setupSection(sct);
-	for (var beat of data.beats) setupBeat(beat);
-	for (var bar of data.bars) setupBar(bar);
-}
-
-function setupSection(section) {
-	startTime = section.start * 1000 - currentSongMs;
-	timeouts.push(
-		setTimeout(() => {
-			console.log("SECTION");
-			//set the description text for this section
-			document.getElementById(
-				"sectionInfo"
-			).textContent = `duration: ${section.duration}, time signature: ${section.time_signature}, loudness: ${section.loudness}, bpm: ${songAnaysis.track.tempo}`;
-			//CurrentMusic.time_signature = section.time_signature;
-			if (songAnaysis.track.tempo > 100) CurrentMusic.time_signature = 1;
-			else CurrentMusic.time_signature = 2;
-
-			effect = ~~(Math.random() * 15);
-			//animate the small section visualizer
-		}, startTime)
-	);
-}
-
-function setupBeat(beat) {
-	startTime = beat.start * 1000 - currentSongMs;
-	if (startTime > 0)
-		timeouts.push(
-			setTimeout(() => {
-				CurrentMusic.startDate = Date.now();
-				CurrentMusic.duration = beat.duration * 1000;
-			}, startTime)
-		);
-}
-var color = 1;
-function setupBar(bar) {
-	startTime = bar.start * 1000 - currentSongMs;
-	if (startTime > 0)
-		timeouts.push(
-			setTimeout(() => {
-				console.log("BAR");
-				rotation++;
-				//set to new color from palette
-				fillColor(palette[color]);
-				color++;
-				color = color % palette.length;
-			}, startTime)
-		);
-}
 getCurrSongInfo();
-//image pixelization stuff
-var img = new Image();
-var canvas = document.getElementById("canvas");
-var ctx = canvas.getContext("2d");
-
-const colorThief = new ColorThief();
-var palette = [[255, 255, 255]];
-
-function pixelateAndDisplay(url) {
-	img.crossOrigin = "anonymous";
-	img.src = url;
-	img.onload = function() {
-		//get the dominant colors in the image
-		palette = colorThief.getPalette(img);
-
-		canvas.height = img.height * 4;
-		canvas.width = img.width * 4;
-		ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-		pixelate();
-	};
-}
-
-function pixelate() {
-	//dynamically adjust canvas size to the size of the uploaded image
-	canvas.height = img.height * 4;
-	canvas.width = img.width * 4;
-	/// cache scaled width and height
-	(w = 16), (h = 16);
-	/// draw original image to the scaled size
-	ctx.drawImage(img, 0, 0, w, h);
-	ctx.mozImageSmoothingEnabled = false;
-	ctx.imageSmoothingEnabled = false;
-	ctx.drawImage(canvas, 0, 0, w, h, 0, 0, canvas.width, canvas.height);
-}
-// DEBUG: this is just for local testing
-//setTimeout(displayAnalysis, 500, testdata);
