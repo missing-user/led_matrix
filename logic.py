@@ -28,7 +28,7 @@ def get_time():
     global start_time_seconds
 
     # check if the song is over, load the new playing song analysis and generate effects
-    if time.time() - start_time_seconds > sph.total_song_time:
+    if time.time() - start_time_seconds > total_song_time:
         print('getting new song')
         sph.get_track()
         build_song_effects()
@@ -49,11 +49,11 @@ def build_song_effects():
     effects_seg.clear()
 
     global start_time_seconds
-    start_time_seconds = time.time() - sph.current_song_time
-    random.seed(sph.currentTrack['item']['id'])
+    start_time_seconds = time.time() - current_song_time
+    random.seed(currentTrack['item']['id'])
 
     global sections_list
-    for sect in sph.results['sections']:
+    for sect in results['sections']:
         h1 = random.random()
         h2 = random.random()
         if abs(h1 - h2) < 0.15:
@@ -64,13 +64,13 @@ def build_song_effects():
     sections_list.reverse()
 
     effects.add(effect_list.timed(random.choice(animChain.reg.all)(), 0))
-    for beatIndex in range(len(sph.results['beats'])):
+    for beatIndex in range(len(results['beats'])):
         if not effects.get_current(beatIndex).length>1:
             anim_choice = random.choice(animChain.reg.all)
             effects.add(effect_list.timed(anim_choice(), beatIndex))
 
 
-    for segment in sph.results['segments']:
+    for segment in results['segments']:
         seg_time = sph.time_to_beats(
             segment['start'])
         seg_duration = sph.time_to_beats(

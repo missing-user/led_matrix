@@ -1,4 +1,4 @@
-// Transcrypt'ed from Python, 2020-07-21 08:34:45
+// Transcrypt'ed from Python, 2020-07-21 08:44:15
 var easing = {};
 var gif = {};
 var math = {};
