@@ -97,8 +97,11 @@ def build_song_effects():
 
 def haveBeenLoaded(arg):
     if results != None:
+        print('results found, loading')
         clearInterval(hack);
         build_song_effects()
+    else:
+        print('no results',results)
 hack = setInterval(haveBeenLoaded, 5)
 
 
