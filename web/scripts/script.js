@@ -34,8 +34,10 @@ function getCurrSongInfo() {
 		.then(getSongAnalysis);
 }
 function getSongAnalysis(songId) {
-	spotifyApi.getAudioAnalysisForTrack(songId).then(r => (results = r));
+	spotifyApi.getAudioAnalysisForTrack(songId).then(r => {
+		results = r;
+		console.log(r);
+	});
 }
-var effect = 0;
 
 getCurrSongInfo();
