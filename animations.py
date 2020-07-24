@@ -96,7 +96,7 @@ def flipEverySecondRow(input_leds):
 def rotate90(input_leds, count=1):
     """rotates the given matrix by count 90deg increments"""
     count = (count + 4) % 4
-    rotated_leds = input_leds
+    rotated_leds = [0 for i in range(row*col)]
     if count == 1:
         for i in range(len(input_leds)):
             # rotate 90 deg
@@ -107,7 +107,7 @@ def rotate90(input_leds, count=1):
 
     elif count == 3:
         for i in range(len(input_leds)):
-            # rotate 90 deg
+            # rotate -90 deg
             rotated_leds[i] = input_leds[from_xy(xy(i)[1], row - 1 - xy(i)[0])]
     elif count == 0:
         return input_leds
