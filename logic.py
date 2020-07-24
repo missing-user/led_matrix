@@ -108,25 +108,6 @@ hack = setInterval(haveBeenLoaded, 5)
 def map_from_to(x, a=0, b=1, c=0, d=1):
     return (x - a) / (b - a) * (d - c) + c
 
-print()
-rtest = anim.rotate90(list(range(row*col)))
-for i in range(col):
-	print(rtest[i*row:(i+1)*row])
-
-print()
-rtest = anim.rotate90(list(range(row*col)),2)
-for i in range(col):
-	print(rtest[i*row:(i+1)*row])
-
-print()
-rtest = anim.rotate90(list(range(row*col)),3)
-for i in range(col):
-	print(rtest[i*row:(i+1)*row])
-
-print()
-rtest = anim.rotate90(list(range(row*col)),4)
-for i in range(col):
-	print(rtest[i*row:(i+1)*row])
 
 def loop():
     if results != None:
@@ -140,8 +121,8 @@ def loop():
 
 
         if not m:
+            print('replacing', m, 'at', curr_effects[0])
             m = [0 for i in range(row*col)]
-            print('replacement')
 
         coloredImage = cmap.color_map(m, int(hue1*18))
 

@@ -86,7 +86,7 @@ def mask_rect(input_leds, fromx, tox, fromy, toy):
 
 
 def flipEverySecondRow(input_leds):
-    leds = input_leds
+    leds = input_leds.slice()
     for y in range(0, col, 2):
         for x in range(row):
             leds[from_xy(row - 1 - x, y)] = input_leds[from_xy(x, y)]
