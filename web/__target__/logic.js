@@ -1,4 +1,4 @@
-// Transcrypt'ed from Python, 2020-07-21 08:44:14
+// Transcrypt'ed from Python, 2020-07-24 11:16:37
 var effect_list = {};
 var random = {};
 var sph = {};
@@ -115,6 +115,26 @@ export var map_from_to = function (x, a, b, c, d) {
 	};
 	return ((x - a) / (b - a)) * (d - c) + c;
 };
+print ();
+export var rtest = anim.rotate90 (list (range (row * col)));
+for (var i = 0; i < col; i++) {
+	print (rtest.__getslice__ (i * row, (i + 1) * row, 1));
+}
+print ();
+var rtest = anim.rotate90 (list (range (row * col)), 2);
+for (var i = 0; i < col; i++) {
+	print (rtest.__getslice__ (i * row, (i + 1) * row, 1));
+}
+print ();
+var rtest = anim.rotate90 (list (range (row * col)), 3);
+for (var i = 0; i < col; i++) {
+	print (rtest.__getslice__ (i * row, (i + 1) * row, 1));
+}
+print ();
+var rtest = anim.rotate90 (list (range (row * col)), 4);
+for (var i = 0; i < col; i++) {
+	print (rtest.__getslice__ (i * row, (i + 1) * row, 1));
+}
 export var loop = function () {
 	if (results != null) {
 		var curr_effects = effects.get_current (get_time ());

@@ -1,4 +1,4 @@
-// Transcrypt'ed from Python, 2020-07-21 08:44:15
+// Transcrypt'ed from Python, 2020-07-24 11:16:38
 var easing = {};
 var gif = {};
 var math = {};
@@ -152,7 +152,13 @@ export var rotate90 = function (input_leds, count) {
 		var count = 1;
 	};
 	var count = __mod__ (count + 4, 4);
-	var rotated_leds = input_leds;
+	var rotated_leds = (function () {
+		var __accu0__ = [];
+		for (var i = 0; i < row * col; i++) {
+			__accu0__.append (0);
+		}
+		return __accu0__;
+	}) ();
 	if (count == 1) {
 		for (var i = 0; i < len (input_leds); i++) {
 			rotated_leds [from_xy (xy (i) [1], (row - 1) - xy (i) [0])] = input_leds [i];
