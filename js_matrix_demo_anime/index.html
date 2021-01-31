@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async="async" src="https://www.googletagmanager.com/gtag/js?id=UA-179475953-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+    gtag('js', new Date());
+
+    gtag('config', 'UA-179475953-1');
+  </script>
+  <meta charset="utf-8">
+  <title>Interactive matrix demo</title>
+  <!-- MOBILE––––––––––––––––––––––– -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;600&display=swap" rel="stylesheet">
+  <!-- CSS––––––––––––––––––––––– -->
+  <link rel="stylesheet" href="css/normalize.css">
+  <link rel="stylesheet" href="css/skeleton.css">
+  <link rel="stylesheet" href="css/darkskelleton.css" media="(prefers-color-scheme: dark)">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" type="image/png" href="images/favicon.png">
+</head>
+
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="column" style="margin-top: 25%">
+        <h4>Web Matrix</h4>
+        <hr>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="column"></div>
+      <style>
+        #grid {
+          display: grid;
+          width: 100%;
+          grid-template-columns: repeat(16, 1fr);
+          grid-template-rows: repeat(16, 1fr);
+          justify-content: center;
+          top: 0;
+          bottom: 0;
+          right: 0;
+          left: 0;
+          outline: 8px solid white;
+        }
+
+        #grid .grid-item {
+          min-width: 100%;
+          min-height: 100%;
+          background-color: #36383c;
+          cursor: pointer;
+          position: relative;
+        }
+
+        #grid .grid-item:after {
+          content: "";
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          left: 0;
+          top: 0;
+          outline: 1px solid gray;
+          display: block;
+          background-image: radial-gradient(transparent, rgba(12, 12, 12, 0.3));
+        }
+      </style>
+      <div id="grid-cont">
+        <div id="grid"></div>
+        <hr>
+        <p>An interactive matrix demo</p>
+        <button onclick="setAnim(twinkle)">twinkle</button>
+        <button onclick="setAnim(rainbow)">rainbow</button>
+        <button onclick="setAnim(pulses)">pulses</button>
+        <button onclick="setAnim(wipes)">wipes</button>
+        <button onclick="setAnim(off)">off</button>
+      </div>
+    </div>
+  </div>
+</body>
+<script src="scripts/anime.min.js"></script>
+<script src="scripts/script.js"></script>
+
+</html>
